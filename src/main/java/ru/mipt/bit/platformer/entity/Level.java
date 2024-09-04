@@ -8,15 +8,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
+import static com.badlogic.gdx.Input.Keys;
+import static com.badlogic.gdx.Input.Keys.*;
 
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import ru.mipt.bit.platformer.entity.Tank;
 import ru.mipt.bit.platformer.entity.Tree;
+import ru.mipt.bit.platformer.entity.GraphicObject;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class Level {
+public class Level implements GraphicObject {
     private static final float MOVEMENT_SPEED = 0.4f;
     private TiledMap level;
     private MapRenderer renderer;

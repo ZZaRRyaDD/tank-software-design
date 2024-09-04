@@ -6,13 +6,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.GridPoint2;
 
 import com.badlogic.gdx.Gdx;
+import static com.badlogic.gdx.Input.Keys;
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 import ru.mipt.bit.platformer.entity.Tree;
+import ru.mipt.bit.platformer.entity.GraphicObject;
 
-public class Tank {
+public class Tank implements GraphicObject {
     private Texture texture;
     private TextureRegion playerGraphics;
     private Rectangle playerRectangle;
