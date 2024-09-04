@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
 public class Tree {
-    public Texture texture;
-    public TextureRegion graphics;
-    public GridPoint2 coordinates = new GridPoint2();
-    public Rectangle rectangle = new Rectangle();
+    private Texture texture;
+    private TextureRegion graphics;
+    private GridPoint2 coordinates = new GridPoint2();
+    private Rectangle rectangle = new Rectangle();
 
     public Tree(String imagePath, int coordinateX, int coordinateY) {
         this.texture = new Texture(imagePath);
@@ -20,6 +20,18 @@ public class Tree {
 
         // set player initial position
         this.coordinates = new GridPoint2(coordinateX, coordinateY);
+    }
+
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+
+    public GridPoint2 getCoordinates() {
+        return coordinates;
+    }
+
+    public TextureRegion getGraphics() {
+        return graphics;
     }
 
     public void dispose() {
