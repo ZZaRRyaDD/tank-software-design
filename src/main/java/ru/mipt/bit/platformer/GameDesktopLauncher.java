@@ -6,13 +6,11 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-import ru.mipt.bit.platformer.entity.Level;
+import ru.mipt.bit.platformer.entity.level.Level;
+import ru.mipt.bit.platformer.entity.tank.PlayerInput;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Batch batch;
@@ -27,18 +25,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void render() {
-        // clear the screen
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-
-        level.turnsTank();
-
-        // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        level.calculateInterpolatedCoordinates(deltaTime);
-
-        // render each tile of the level
-        level.renderTiles();
+        clearScreen();
+        level.moveTank(PlayerInput.chooseDirection());
+        level.renderMoves(Gdx.graphics.getDeltaTime());
 
         // start recording all drawing commands
         batch.begin();
@@ -47,6 +36,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // submit all drawing requests
         batch.end();
+    }
+
+    public void clearScreen() {
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
     @Override
