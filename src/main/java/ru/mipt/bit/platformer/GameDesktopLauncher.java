@@ -10,32 +10,22 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
 import ru.mipt.bit.platformer.entity.level.Level;
-import ru.mipt.bit.platformer.entity.tank.PlayerInput;
+import ru.mipt.bit.platformer.entity.playerinput.PlayerInput;
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private Batch batch;
-
     private Level level;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        level = new Level("level.tmx", batch);
+        level = new Level("level.tmx", new SpriteBatch());
     }
 
     @Override
     public void render() {
         clearScreen();
         level.moveTank(PlayerInput.chooseDirection());
-        level.renderMoves(Gdx.graphics.getDeltaTime());
-
-        // start recording all drawing commands
-        batch.begin();
-
-        level.renderObjects(batch);
-
-        // submit all drawing requests
-        batch.end();
+        level.drawer.renderMoves(Gdx.graphics.getDeltaTime());
+        level.drawer.recordDrawCommand();
     }
 
     public void clearScreen() {
@@ -61,8 +51,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        level.dispose();
-        batch.dispose();
+        level.drawer.dispose();
     }
 
     public static void main(String[] args) {

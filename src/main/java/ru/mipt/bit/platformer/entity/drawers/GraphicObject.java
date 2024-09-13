@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.entity;
+package ru.mipt.bit.platformer.entity.drawers;
 
 public interface GraphicObject {
     public void dispose();

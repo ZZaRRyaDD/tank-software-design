@@ -8,18 +8,19 @@ import static com.badlogic.gdx.Input.Keys;
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-import ru.mipt.bit.platformer.entity.Drawer;
+import ru.mipt.bit.platformer.entity.drawers.LevelObjectDrawer;
 
 public class Tank {
 
-    public Drawer drawer;
+    public LevelObjectDrawer drawer;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
 
     public Tank(String imagePath, int coordinateX, int coordinateY) {
-        this.drawer = new Drawer(imagePath);
+        this.drawer = new LevelObjectDrawer(imagePath);
+        this.drawer.draw();
 
         this.destinationCoordinates = new GridPoint2(coordinateX, coordinateY);
         this.coordinates = new GridPoint2(this.destinationCoordinates);
