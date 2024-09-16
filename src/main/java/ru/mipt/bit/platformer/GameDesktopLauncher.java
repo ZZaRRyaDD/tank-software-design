@@ -4,28 +4,30 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 
 import ru.mipt.bit.platformer.entity.level.Level;
+import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
 import ru.mipt.bit.platformer.entity.playerinput.PlayerInput;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
+    private LevelDrawer levelDrawer;
 
     @Override
     public void create() {
-        level = new Level("level.tmx", new SpriteBatch());
+        level = new Level();
+        levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
+        levelDrawer.draw();
     }
 
     @Override
     public void render() {
         clearScreen();
         level.moveTank(PlayerInput.chooseDirection());
-        level.drawer.renderMoves(Gdx.graphics.getDeltaTime());
-        level.drawer.recordDrawCommand();
+        levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
+        levelDrawer.recordDrawCommand();
     }
 
     public void clearScreen() {
@@ -51,7 +53,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        level.drawer.dispose();
+        levelDrawer.dispose();
     }
 
     public static void main(String[] args) {
