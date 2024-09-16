@@ -32,9 +32,10 @@ public class Level {
     public void moveTank(Direction direction) {
         if (direction != Direction.NULL) {
             GridPoint2 point = new GridPoint2(tank.getCoordinates());
-            point = point.add(direction.directionPoint.x, direction.directionPoint.y);
+            GridPoint2 directionPoint = direction.getDirectionPoint();
+            point = point.add(directionPoint.x, directionPoint.y);
             if (!inPointIsTree(point) && isEqual(tank.getMovementProgress(), 1f)) {
-                tank.move(direction.directionPoint, direction.directionRotation);
+                tank.move(directionPoint, direction.getDirectionRotation());
             }
         }
     }
