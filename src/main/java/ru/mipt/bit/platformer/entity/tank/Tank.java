@@ -1,27 +1,19 @@
 package ru.mipt.bit.platformer.entity.tank;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.GridPoint2;
 
-import com.badlogic.gdx.Gdx;
-import static com.badlogic.gdx.Input.Keys;
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
-
-import ru.mipt.bit.platformer.entity.Drawer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank {
-
-    public Drawer drawer;
+    private static final float MOVEMENT_SPEED = 0.4f;
     private GridPoint2 coordinates;
     private GridPoint2 destinationCoordinates;
     private float movementProgress = 1f;
     private float rotation;
 
-    public Tank(String imagePath, int coordinateX, int coordinateY) {
-        this.drawer = new Drawer(imagePath);
-
-        this.destinationCoordinates = new GridPoint2(coordinateX, coordinateY);
+    public Tank(GridPoint2 point) {
+        this.destinationCoordinates = point;
         this.coordinates = new GridPoint2(this.destinationCoordinates);
         this.rotation = 0f;
     }
@@ -42,12 +34,15 @@ public class Tank {
         return rotation;
     }
 
-    public void setMovementProgress(float movementProgress) {
-        this.movementProgress = movementProgress;
-    }
-
     public void setCoordinates(GridPoint2 point) {
         coordinates.set(point);
+    }
+
+    public void updateState(float deltaTime) {
+        movementProgress = continueProgress(movementProgress, deltaTime, MOVEMENT_SPEED);
+        if (isEqual(movementProgress, 1f)) {
+            setCoordinates(destinationCoordinates);
+        }
     }
 
     public void move(GridPoint2 point, float rotation) {

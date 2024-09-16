@@ -1,22 +1,21 @@
-package ru.mipt.bit.platformer.entity.tank;
-
-import ru.mipt.bit.platformer.entity.tank.TankDirection;
+package ru.mipt.bit.platformer.entity.playerinput;
 
 import com.badlogic.gdx.Gdx;
-import static com.badlogic.gdx.Input.Keys;
+import ru.mipt.bit.platformer.entity.tank.Direction;
+
 import static com.badlogic.gdx.Input.Keys.*;
 
 public class PlayerInput {
-    public static TankDirection chooseDirection() {
+    public static Direction chooseDirection() {
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            return TankDirection.RIGHT;
+            return Direction.RIGHT;
         } else if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            return TankDirection.LEFT;
+            return Direction.LEFT;
         } else if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            return TankDirection.UP;
+            return Direction.UP;
         } else if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            return TankDirection.DOWN;
+            return Direction.DOWN;
         }
-        return TankDirection.NULL;
+        return Direction.NULL;
     }
 }
