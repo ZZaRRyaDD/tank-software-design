@@ -7,9 +7,18 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
-import ru.mipt.bit.platformer.entity.level.Level;
+import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
-import ru.mipt.bit.platformer.entity.playerinput.PlayerInput;
+import ru.mipt.bit.platformer.entity.objects.Tank;
+import ru.mipt.bit.platformer.entity.objects.Tree;
+import ru.mipt.bit.platformer.entity.objects.base.MovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.UnmovableLevelObject;
+import ru.mipt.bit.platformer.playerinput.PlayerInput;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
@@ -17,7 +26,16 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        level = new Level();
+        List<MovableLevelObject> tanks = new ArrayList<>(Arrays.asList(
+            new Tank(new GridPoint2(1, 1)),
+            new Tank(new GridPoint2(2, 1))
+        ));
+        List<UnmovableLevelObject> trees = new ArrayList<>(Arrays.asList(
+            new Tree(new GridPoint2(1, 3)),
+            new Tree(new GridPoint2(2, 3))
+        ));
+
+        level = new Level(tanks, trees);
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
         levelDrawer.draw();
     }

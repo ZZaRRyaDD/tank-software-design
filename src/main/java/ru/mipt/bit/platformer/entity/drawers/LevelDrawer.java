@@ -7,13 +7,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 
-import ru.mipt.bit.platformer.entity.tree.Tree;
-import ru.mipt.bit.platformer.entity.tank.Tank;
-import ru.mipt.bit.platformer.entity.level.Level;
+import ru.mipt.bit.platformer.entity.objects.*;
+import ru.mipt.bit.platformer.entity.objects.base.MovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.UnmovableLevelObject;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
@@ -26,8 +26,8 @@ public class LevelDrawer implements GraphicObject {
     private TiledMapTileLayer groundLayer;
     private TileMovement tileMovement;
     private Level level;
-    private LevelObjectDrawer tankDrawer;
-    private final List<LevelObjectDrawer> treesDrawer = new ArrayList<LevelObjectDrawer>();
+    private final HashMap<MovableLevelObject, LevelObjectDrawer> movableDrawers = new HashMap<>();
+    private final HashMap<UnmovableLevelObject, LevelObjectDrawer> unmovableDrawers = new HashMap<>();
 
 
     public LevelDrawer(String filePath, Batch batch, Level level) {
@@ -38,8 +38,8 @@ public class LevelDrawer implements GraphicObject {
 
     public void draw() {
         drawLevel();
-        drawTank();
-        drawTrees();
+        drawMovable();
+        drawUnmovable();
     }
 
     public void drawLevel() {
@@ -49,49 +49,62 @@ public class LevelDrawer implements GraphicObject {
         this.tileMovement = new TileMovement(this.groundLayer, Interpolation.smooth);
     }
 
-    public void drawTank() {
-        tankDrawer = new LevelObjectDrawer("images/tank_blue.png");
-        tankDrawer.draw();
+    public void drawMovable() {
+        for (MovableLevelObject obj : level.getMovable()) {
+            LevelObjectDrawer tankDrawerObject = new LevelObjectDrawer("images/blueTank.png");
+            movableDrawers.put(obj, tankDrawerObject);
+            tankDrawerObject.draw();
+        }
     }
 
-    public void drawTrees() {
-        for (Tree tree : level.getTress()) {
+    public void drawUnmovable() {
+        for (UnmovableLevelObject obj : level.getUnmovable()) {
             LevelObjectDrawer treeDrawerObject = new LevelObjectDrawer("images/greenTree.png");
-            treesDrawer.add(treeDrawerObject);
+            unmovableDrawers.put(obj, treeDrawerObject);
             treeDrawerObject.draw();
-            moveRectangleAtTileCenter(groundLayer, treeDrawerObject.getRectangle(), tree.getCoordinates());
+            moveRectangleAtTileCenter(groundLayer, treeDrawerObject.getRectangle(), obj.getCoordinates());
         }
     }
 
     public void renderMoves(float deltaTime) {
-        Tank tank = level.getTank();
-        tileMovement.moveRectangleBetweenTileCenters(tankDrawer.getRectangle(), tank.getCoordinates(), tank.getDestinationCoordinates(), tank.getMovementProgress());
-        tank.updateState(deltaTime);
-
+        float movementSpeed = 0.4f;
+        for (Map.Entry<MovableLevelObject, LevelObjectDrawer> entry : movableDrawers.entrySet()) {
+            LevelObjectDrawer drawer = entry.getValue();
+            MovableLevelObject movableObject = entry.getKey();
+            tileMovement.moveRectangleBetweenTileCenters(drawer.getRectangle(), movableObject.getCoordinates(), movableObject.getDestinationCoordinates(), movableObject.getMovementProgress());
+            movableObject.updateState(deltaTime, movementSpeed);
+        }
         renderer.render();
     }
 
     public void renderObjects() {
-        Tank tank = level.getTank();
-        drawTextureRegionUnscaled(batch, tankDrawer.getGraphics(), tankDrawer.getRectangle(), tank.getRotation());
-        for (LevelObjectDrawer treeDrawer : treesDrawer) {
-            drawTextureRegionUnscaled(batch, treeDrawer.getGraphics(), treeDrawer.getRectangle(), 0f);
+        for (Map.Entry<MovableLevelObject, LevelObjectDrawer> entry : movableDrawers.entrySet()) {
+            LevelObjectDrawer drawer = entry.getValue();
+            MovableLevelObject movableObject = entry.getKey();
+            drawTextureRegionUnscaled(batch, drawer.getGraphics(), drawer.getRectangle(), movableObject.getRotation());
+        }
+        for (Map.Entry<UnmovableLevelObject, LevelObjectDrawer> entry : unmovableDrawers.entrySet()) {
+            LevelObjectDrawer drawer = entry.getValue();
+            UnmovableLevelObject unmovableObject = entry.getKey();
+            drawTextureRegionUnscaled(batch, drawer.getGraphics(), drawer.getRectangle(), 0f);
         }
     }
 
     public void recordDrawCommand() {
-        // start recording all drawing commands
         batch.begin();
         renderObjects();
-        // submit all drawing requests
         batch.end();
     }
 
     public void dispose() {
-        tankDrawer.dispose();
-        for (LevelObjectDrawer treeDrawer : treesDrawer) {
-            treeDrawer.dispose();
+        for (LevelObjectDrawer drawer : movableDrawers.values()) {
+            drawer.dispose();
         }
+
+        for (LevelObjectDrawer drawer : unmovableDrawers.values()) {
+            drawer.dispose();
+        }
+
         map.dispose();
         batch.dispose();
     }

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.entity.tank;
+package ru.mipt.bit.platformer.playerinput.actions;
 
 import com.badlogic.gdx.math.GridPoint2;
 
