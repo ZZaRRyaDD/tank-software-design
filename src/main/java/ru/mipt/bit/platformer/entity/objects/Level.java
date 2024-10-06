@@ -2,35 +2,33 @@ package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import ru.mipt.bit.platformer.entity.objects.base.MovableLevelObject;
-import ru.mipt.bit.platformer.entity.objects.base.UnmovableLevelObject;
-import ru.mipt.bit.platformer.playerinput.actions.Direction;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
+import ru.mipt.bit.platformer.playerinput.keys.Direction;
 
 import java.util.List;
 
 public class Level {
-    private final List<MovableLevelObject> movable;
-    private final List<UnmovableLevelObject> unmovable;
+    private final List<AbstractMovableLevelObject> movable;
+    private final List<AbstractUnmovableLevelObject> unmovable;
 
-    public Level(List<MovableLevelObject> movable, List<UnmovableLevelObject> unmovable) {
+    public Level(List<AbstractMovableLevelObject> movable, List<AbstractUnmovableLevelObject> unmovable) {
         this.movable = movable;
         this.unmovable = unmovable;
     }
 
-    public void moveTank(Direction direction) {
-        if (direction != Direction.NULL) {
-            for (MovableLevelObject obj : movable) {
-                GridPoint2 point = new GridPoint2(obj.getCoordinates());
-                point.add(direction.getDirectionPoint());
-                if (isFreePoint(point)) {
-                    obj.move(direction);
-                }
+    public void moveLevelObject(Direction direction) {
+        for (AbstractMovableLevelObject obj : movable) {
+            GridPoint2 point = new GridPoint2(obj.getCoordinates());
+            point.add(direction.getDirectionPoint());
+            if (isFreePoint(point)) {
+                obj.move(direction);
             }
         }
     }
 
     public boolean isFreePoint(GridPoint2 point) {
-        for (UnmovableLevelObject obj : unmovable) {
+        for (AbstractUnmovableLevelObject obj : unmovable) {
             if (obj.getCoordinates().equals(point)) {
                 return false;
             }
@@ -38,11 +36,11 @@ public class Level {
         return true;
     }
 
-    public List<MovableLevelObject> getMovable() {
+    public List<AbstractMovableLevelObject> getMovable() {
         return movable;
     }
 
-    public List<UnmovableLevelObject> getUnmovable() {
+    public List<AbstractUnmovableLevelObject> getUnmovable() {
         return unmovable;
     }
 }

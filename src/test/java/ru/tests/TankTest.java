@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.mipt.bit.platformer.entity.objects.Tank;
-import ru.mipt.bit.platformer.playerinput.actions.Direction;
+import ru.mipt.bit.platformer.playerinput.keys.Direction;
 
 public class TankTest {
     @ParameterizedTest

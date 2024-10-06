@@ -12,9 +12,10 @@ import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
 import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.entity.objects.Tree;
-import ru.mipt.bit.platformer.entity.objects.base.MovableLevelObject;
-import ru.mipt.bit.platformer.entity.objects.base.UnmovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
 import ru.mipt.bit.platformer.playerinput.PlayerInput;
+import ru.mipt.bit.platformer.playerinput.PlayerInputHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +27,10 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        List<MovableLevelObject> tanks = new ArrayList<>(Arrays.asList(
-            new Tank(new GridPoint2(1, 1)),
-            new Tank(new GridPoint2(2, 1))
+        List<AbstractMovableLevelObject> tanks = new ArrayList<>(Arrays.asList(
+            new Tank(new GridPoint2(1, 1))
         ));
-        List<UnmovableLevelObject> trees = new ArrayList<>(Arrays.asList(
+        List<AbstractUnmovableLevelObject> trees = new ArrayList<>(Arrays.asList(
             new Tree(new GridPoint2(1, 3)),
             new Tree(new GridPoint2(2, 3))
         ));
@@ -43,7 +43,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void render() {
         clearScreen();
-        level.moveTank(PlayerInput.chooseDirection());
+
+        PlayerInputHandler.handle(level, PlayerInput.getAction());
+
         levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
         levelDrawer.recordDrawCommand();
     }
@@ -70,7 +72,6 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void dispose() {
-        // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
         levelDrawer.dispose();
     }
 

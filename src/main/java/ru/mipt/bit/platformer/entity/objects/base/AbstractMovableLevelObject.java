@@ -1,9 +1,9 @@
 package ru.mipt.bit.platformer.entity.objects.base;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.playerinput.actions.Direction;
+import ru.mipt.bit.platformer.playerinput.keys.Direction;
 
-public abstract class MovableLevelObject extends LevelObject {
+public abstract class AbstractMovableLevelObject extends AbstractLevelObject {
     protected float rotation = 0f;
     protected static final float MOVEMENT_PROGRESS_MOVE = 1f;
     protected static final float MOVEMENT_PROGRESS_TURN = 0f;

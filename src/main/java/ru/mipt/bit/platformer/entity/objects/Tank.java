@@ -1,13 +1,13 @@
 package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.entity.objects.base.MovableLevelObject;
-import ru.mipt.bit.platformer.playerinput.actions.Direction;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.playerinput.keys.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Tank extends MovableLevelObject {
+public class Tank extends AbstractMovableLevelObject {
 
     public Tank(GridPoint2 point) {
         this.destinationCoordinates = point;
