@@ -4,38 +4,50 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-import ru.mipt.bit.platformer.entity.level.Level;
-import ru.mipt.bit.platformer.entity.tank.PlayerInput;
+import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entity.objects.Level;
+import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.objects.Tank;
+import ru.mipt.bit.platformer.entity.objects.Tree;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
+import ru.mipt.bit.platformer.playerinput.PlayerInput;
+import ru.mipt.bit.platformer.playerinput.PlayerInputHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private Batch batch;
-
     private Level level;
+    private LevelDrawer levelDrawer;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        level = new Level("level.tmx", batch);
+        List<AbstractMovableLevelObject> tanks = new ArrayList<>(Arrays.asList(
+            new Tank(new GridPoint2(1, 1))
+        ));
+        List<AbstractUnmovableLevelObject> trees = new ArrayList<>(Arrays.asList(
+            new Tree(new GridPoint2(1, 3)),
+            new Tree(new GridPoint2(2, 3))
+        ));
+
+        level = new Level(tanks, trees);
+        levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
+        levelDrawer.draw();
     }
 
     @Override
     public void render() {
         clearScreen();
-        level.moveTank(PlayerInput.chooseDirection());
-        level.renderMoves(Gdx.graphics.getDeltaTime());
 
-        // start recording all drawing commands
-        batch.begin();
+        PlayerInputHandler.handle(level, PlayerInput.getAction());
 
-        level.renderObjects(batch);
-
-        // submit all drawing requests
-        batch.end();
+        levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
+        levelDrawer.recordDrawCommand();
     }
 
     public void clearScreen() {
@@ -60,9 +72,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void dispose() {
-        // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        level.dispose();
-        batch.dispose();
+        levelDrawer.dispose();
     }
 
     public static void main(String[] args) {
