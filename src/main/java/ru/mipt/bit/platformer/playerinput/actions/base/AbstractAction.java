@@ -1,7 +1,8 @@
 package ru.mipt.bit.platformer.playerinput.actions.base;
 
 import ru.mipt.bit.platformer.entity.objects.Level;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
 
-public abstract class AbstractAction {
-    public abstract void apply(Level level);
+public interface AbstractAction {
+    void apply(Level level, AbstractMovableLevelObject object);
 }

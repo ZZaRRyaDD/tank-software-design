@@ -25,7 +25,7 @@ public class LevelDrawer implements GraphicObject {
     private MapRenderer renderer;
     private TiledMapTileLayer groundLayer;
     private TileMovement tileMovement;
-    private Level level;
+    private final Level level;
     private final HashMap<AbstractMovableLevelObject, LevelObjectDrawer> movableDrawers = new HashMap<>();
     private final HashMap<AbstractUnmovableLevelObject, LevelObjectDrawer> unmovableDrawers = new HashMap<>();
 

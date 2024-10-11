@@ -7,44 +7,56 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
-import ru.mipt.bit.platformer.entity.objects.Tank;
-import ru.mipt.bit.platformer.entity.objects.Tree;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
+import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.plaint_text.PlainTextLevelParser;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelReader;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader;
+import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
 import ru.mipt.bit.platformer.playerinput.PlayerInput;
-import ru.mipt.bit.platformer.playerinput.PlayerInputHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
+    private LevelGenerator levelGenerator;
     private LevelDrawer levelDrawer;
 
     @Override
     public void create() {
-        List<AbstractMovableLevelObject> tanks = new ArrayList<>(Arrays.asList(
-            new Tank(new GridPoint2(1, 1))
-        ));
-        List<AbstractUnmovableLevelObject> trees = new ArrayList<>(Arrays.asList(
-            new Tree(new GridPoint2(1, 3)),
-            new Tree(new GridPoint2(2, 3))
-        ));
+        levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
+        level = levelGenerator.generate();
 
-        level = new Level(tanks, trees);
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
         levelDrawer.draw();
+    }
+
+    public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
+        LevelGenerator levelGeneratorStrategy;
+        switch (strategy) {
+            case RANDOM:
+                levelGeneratorStrategy = new RandomLevelGenerator(10, 8);
+                break;
+            case FROM_FILE_PLAIN_TEXT:
+                LevelReader reader = new PlaintTextLevelReader("src/main/resources/level.txt");
+                LevelParser parser = new PlainTextLevelParser();
+                levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser);
+                break;
+            default:
+                levelGeneratorStrategy = new RandomLevelGenerator(10, 8);
+                break;
+        }
+        return levelGeneratorStrategy;
     }
 
     @Override
     public void render() {
         clearScreen();
 
-        PlayerInputHandler.handle(level, PlayerInput.getAction());
+        PlayerInput.getAction().apply(level, level.getFirstMovable());
 
         levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
         levelDrawer.recordDrawCommand();

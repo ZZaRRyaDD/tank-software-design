@@ -17,13 +17,11 @@ public class Level {
         this.unmovable = unmovable;
     }
 
-    public void moveLevelObject(Direction direction) {
-        for (AbstractMovableLevelObject obj : movable) {
-            GridPoint2 point = new GridPoint2(obj.getCoordinates());
-            point.add(direction.getDirectionPoint());
-            if (isFreePoint(point)) {
-                obj.move(direction);
-            }
+    public void moveLevelObject(Direction direction, AbstractMovableLevelObject obj) {
+        GridPoint2 point = new GridPoint2(obj.getCoordinates());
+        point.add(direction.getDirectionPoint());
+        if (isFreePoint(point)) {
+            obj.move(direction);
         }
     }
 
@@ -38,6 +36,10 @@ public class Level {
 
     public List<AbstractMovableLevelObject> getMovable() {
         return movable;
+    }
+
+    public AbstractMovableLevelObject getFirstMovable() {
+        return movable.get(0);
     }
 
     public List<AbstractUnmovableLevelObject> getUnmovable() {
