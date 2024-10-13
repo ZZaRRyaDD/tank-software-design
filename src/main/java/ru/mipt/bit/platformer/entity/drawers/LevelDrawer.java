@@ -29,7 +29,6 @@ public class LevelDrawer implements GraphicObject {
     private final HashMap<AbstractMovableLevelObject, LevelObjectDrawer> movableDrawers = new HashMap<>();
     private final HashMap<AbstractUnmovableLevelObject, LevelObjectDrawer> unmovableDrawers = new HashMap<>();
 
-
     public LevelDrawer(String filePath, Batch batch, Level level) {
         this.filePath = filePath;
         this.batch = batch;
@@ -51,18 +50,18 @@ public class LevelDrawer implements GraphicObject {
 
     public void drawMovable() {
         for (AbstractMovableLevelObject obj : level.getMovable()) {
-            LevelObjectDrawer tankDrawerObject = new LevelObjectDrawer("images/blueTank.png");
-            movableDrawers.put(obj, tankDrawerObject);
-            tankDrawerObject.draw();
+            LevelObjectDrawer movableDrawer = new LevelObjectDrawer("images/blueTank.png");
+            movableDrawers.put(obj, movableDrawer);
+            movableDrawer.draw();
         }
     }
 
     public void drawUnmovable() {
         for (AbstractUnmovableLevelObject obj : level.getUnmovable()) {
-            LevelObjectDrawer treeDrawerObject = new LevelObjectDrawer("images/greenTree.png");
-            unmovableDrawers.put(obj, treeDrawerObject);
-            treeDrawerObject.draw();
-            moveRectangleAtTileCenter(groundLayer, treeDrawerObject.getRectangle(), obj.getCoordinates());
+            LevelObjectDrawer unmovableDrawer = new LevelObjectDrawer("images/greenTree.png");
+            unmovableDrawers.put(obj, unmovableDrawer);
+            unmovableDrawer.draw();
+            moveRectangleAtTileCenter(groundLayer, unmovableDrawer.getRectangle(), obj.getCoordinates());
         }
     }
 

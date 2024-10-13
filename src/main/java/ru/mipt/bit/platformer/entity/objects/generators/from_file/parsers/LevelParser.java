@@ -9,4 +9,6 @@ public interface LevelParser {
     void parse(List<String> lines);
     List<AbstractMovableLevelObject> getMovableLevelObjects();
     List<AbstractUnmovableLevelObject> getUnmovableLevelObjects();
+    Integer getHeight();
+    Integer getWidth();
 }
