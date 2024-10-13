@@ -24,4 +24,5 @@ public abstract class AbstractMovableLevelObject extends AbstractLevelObject {
     public abstract void updateState(float deltaTime, float movementSpeed);
 
     public abstract void move(Direction direction);
+    public abstract void turn(Direction direction);
 }

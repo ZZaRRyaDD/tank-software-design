@@ -23,7 +23,9 @@ public class FromFileLevelGenerator implements LevelGenerator {
 
         return new Level(
             fileParser.getMovableLevelObjects(),
-            fileParser.getUnmovableLevelObjects()
+            fileParser.getUnmovableLevelObjects(),
+            fileParser.getHeight(),
+            fileParser.getWidth()
         );
     }
 }

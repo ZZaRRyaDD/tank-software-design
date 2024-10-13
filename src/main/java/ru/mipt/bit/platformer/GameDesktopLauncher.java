@@ -51,7 +51,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelGenerator levelGeneratorStrategy;
         switch (strategy) {
             case RANDOM:
-                levelGeneratorStrategy = new RandomLevelGenerator(10, 8);
+                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
                 break;
             case FROM_FILE_PLAIN_TEXT:
                 LevelReader reader = new PlaintTextLevelReader("src/main/resources/level.txt");
@@ -59,7 +59,7 @@ public class GameDesktopLauncher implements ApplicationListener {
                 levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser);
                 break;
             default:
-                levelGeneratorStrategy = new RandomLevelGenerator(10, 8);
+                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
                 break;
         }
         return levelGeneratorStrategy;

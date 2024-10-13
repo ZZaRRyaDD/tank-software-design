@@ -21,8 +21,12 @@ public class Tank extends AbstractMovableLevelObject {
         }
     }
 
-    public void move(Direction direction) {
+    public void turn(Direction direction) {
         rotation = direction.getDirectionRotation();
+    }
+
+    public void move(Direction direction) {
+        turn(direction);
         if (isEqual(getMovementProgress(), MOVEMENT_PROGRESS_MOVE)) {
             destinationCoordinates.add(direction.getDirectionPoint());
             movementProgress = MOVEMENT_PROGRESS_TURN;

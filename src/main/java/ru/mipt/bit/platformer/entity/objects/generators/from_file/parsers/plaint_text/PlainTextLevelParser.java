@@ -12,11 +12,16 @@ import java.util.List;
 
 public class PlainTextLevelParser implements LevelParser {
 
-    List<AbstractMovableLevelObject> movable = new ArrayList<>();
-    List<AbstractUnmovableLevelObject> unmovable = new ArrayList<>();
+    private List<AbstractMovableLevelObject> movable = new ArrayList<>();
+    private List<AbstractUnmovableLevelObject> unmovable = new ArrayList<>();
+    private Integer height;
+    private Integer width;
 
     @Override
     public void parse(List<String> lines) {
+        width = lines.size();
+        height = lines.get(0).length();
+
         movable.clear();
         unmovable.clear();
         int xCoordinate, yCoordinate = lines.size();
@@ -47,5 +52,15 @@ public class PlainTextLevelParser implements LevelParser {
     @Override
     public List<AbstractUnmovableLevelObject> getUnmovableLevelObjects() {
         return unmovable;
+    }
+
+    @Override
+    public Integer getHeight() {
+        return height;
+    }
+
+    @Override
+    public Integer getWidth() {
+        return width;
     }
 }

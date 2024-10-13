@@ -11,16 +11,21 @@ import java.util.List;
 public class Level {
     private final List<AbstractMovableLevelObject> movable;
     private final List<AbstractUnmovableLevelObject> unmovable;
+    private final Integer height;
+    private final Integer width;
 
-    public Level(List<AbstractMovableLevelObject> movable, List<AbstractUnmovableLevelObject> unmovable) {
+    public Level(List<AbstractMovableLevelObject> movable, List<AbstractUnmovableLevelObject> unmovable, Integer height, Integer width) {
         this.movable = movable;
         this.unmovable = unmovable;
+        this.height = height;
+        this.width = width;
     }
 
     public void moveLevelObject(Direction direction, AbstractMovableLevelObject obj) {
         GridPoint2 point = new GridPoint2(obj.getCoordinates());
         point.add(direction.getDirectionPoint());
-        if (isFreePoint(point)) {
+        obj.turn(direction);
+        if (isFreePoint(point) && intoMapBorder(point)) {
             obj.move(direction);
         }
     }
@@ -32,6 +37,10 @@ public class Level {
             }
         }
         return true;
+    }
+
+    public boolean intoMapBorder(GridPoint2 point) {
+        return (0 <= point.x && point.x < width) && (0 <= point.y && point.y < height);
     }
 
     public List<AbstractMovableLevelObject> getMovable() {

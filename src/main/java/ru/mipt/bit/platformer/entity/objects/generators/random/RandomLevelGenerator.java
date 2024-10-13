@@ -26,7 +26,7 @@ public class RandomLevelGenerator implements LevelGenerator {
 
         List<AbstractUnmovableLevelObject> unmovable = generateUnmovableObjects(5, random, points);
         List<AbstractMovableLevelObject> movable = generateMovableObjects(1, random, points);
-        return new Level(movable, unmovable);
+        return new Level(movable, unmovable, height, width);
     }
 
     public List<AbstractUnmovableLevelObject> generateUnmovableObjects(int countObjects, Random random, Set<GridPoint2> points) {
@@ -50,6 +50,7 @@ public class RandomLevelGenerator implements LevelGenerator {
             while (points.contains(point)) {
                 point = new GridPoint2(random.nextInt(height), random.nextInt(width));
             }
+            System.out.println(point);
             movable.add(new Tank(point));
         }
         return movable;
