@@ -17,21 +17,34 @@ import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelR
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader;
 import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
-import ru.mipt.bit.platformer.playerinput.PlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.DefaultKeyboardActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInput;
 
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
-    private LevelGenerator levelGenerator;
     private LevelDrawer levelDrawer;
+    private PlayerInput input;
 
     @Override
     public void create() {
-        levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
+        input = configureInput();
+
+        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
         level = levelGenerator.generate();
 
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
         levelDrawer.draw();
+    }
+
+    public PlayerInput configureInput() {
+        PlayerInputActions keyboardActions = new KeyboardPlayerInputActions();
+        new DefaultKeyboardActions().registerActions(keyboardActions);
+
+        return new KeyboardPlayerInput(keyboardActions);
     }
 
     public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
@@ -56,7 +69,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void render() {
         clearScreen();
 
-        PlayerInput.getAction().apply(level, level.getFirstMovable());
+        input.getAction().apply(level, level.getFirstMovable());
 
         levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
         levelDrawer.recordDrawCommand();

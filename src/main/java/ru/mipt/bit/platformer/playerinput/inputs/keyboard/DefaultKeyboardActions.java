@@ -1,17 +1,22 @@
-package ru.mipt.bit.platformer.playerinput.keys;
+package ru.mipt.bit.platformer.playerinput.inputs.keyboard;
 
 import ru.mipt.bit.platformer.playerinput.actions.MoveAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInputDefaultActions;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
-public class KeyActions {
-    private static final Map<Integer, AbstractAction> associationKeys = new HashMap<>();
+public class DefaultKeyboardActions implements PlayerInputDefaultActions {
+    private final Map<Integer, AbstractAction> associationKeys = new HashMap<>();
 
-    private static void setMoves() {
+    public DefaultKeyboardActions() {
+        setMoves();
+    }
+    private void setMoves() {
         associationKeys.put(RIGHT, new MoveAction(Direction.RIGHT));
         associationKeys.put(D, new MoveAction(Direction.RIGHT));
         associationKeys.put(LEFT, new MoveAction(Direction.LEFT));
@@ -22,8 +27,10 @@ public class KeyActions {
         associationKeys.put(S, new MoveAction(Direction.DOWN));
     }
 
-    public static Map<Integer, AbstractAction> getKeyActions() {
-        setMoves();
-        return associationKeys;
+    @Override
+    public void registerActions(PlayerInputActions playerInput) {
+        for (Map.Entry<Integer, AbstractAction> entry : associationKeys.entrySet()) {
+            playerInput.registerAction(entry.getKey(), entry.getValue());
+        }
     }
 }

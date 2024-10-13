@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.entity.objects.base;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.playerinput.keys.Direction;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.Direction;
 
 public abstract class AbstractMovableLevelObject extends AbstractLevelObject {
     protected float rotation = 0f;

@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
-import ru.mipt.bit.platformer.playerinput.keys.Direction;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
@@ -22,9 +22,9 @@ public class Tank extends AbstractMovableLevelObject {
     }
 
     public void move(Direction direction) {
+        rotation = direction.getDirectionRotation();
         if (isEqual(getMovementProgress(), MOVEMENT_PROGRESS_MOVE)) {
             destinationCoordinates.add(direction.getDirectionPoint());
-            rotation = direction.getDirectionRotation();
             movementProgress = MOVEMENT_PROGRESS_TURN;
         }
     }
