@@ -14,6 +14,7 @@ public class RandomLevelGenerator implements LevelGenerator {
 
     private final int height;
     private final int width;
+    private final Set<GridPoint2> points = new HashSet<>();
 
     public RandomLevelGenerator(int height, int width) {
         this.height = height;
@@ -21,7 +22,6 @@ public class RandomLevelGenerator implements LevelGenerator {
     }
     @Override
     public Level generate() {
-        Set<GridPoint2> points = new HashSet<>();
         Random random = new Random();
 
         List<AbstractUnmovableLevelObject> unmovable = generateUnmovableObjects(5, random, points);
@@ -50,7 +50,6 @@ public class RandomLevelGenerator implements LevelGenerator {
             while (points.contains(point)) {
                 point = new GridPoint2(random.nextInt(height), random.nextInt(width));
             }
-            System.out.println(point);
             movable.add(new Tank(point));
         }
         return movable;
