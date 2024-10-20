@@ -20,36 +20,49 @@ public class RandomLevelGenerator implements LevelGenerator {
         this.height = height;
         this.width = width;
     }
+
     @Override
     public Level generate() {
+        points.clear();
         Random random = new Random();
 
-        List<AbstractUnmovableLevelObject> unmovable = generateUnmovableObjects(5, random, points);
-        List<AbstractMovableLevelObject> movable = generateMovableObjects(1, random, points);
+        List<AbstractUnmovableLevelObject> unmovable = generateUnmovableObjects(5, random);
+        List<AbstractMovableLevelObject> movable = generateMovableObjects(3, random);
         return new Level(movable, unmovable, height, width);
     }
 
-    public List<AbstractUnmovableLevelObject> generateUnmovableObjects(int countObjects, Random random, Set<GridPoint2> points) {
+    private GridPoint2 getRandomPoint(Random random) {
+        return new GridPoint2(random.nextInt(width - 1), random.nextInt(height - 1));
+    }
+
+    private boolean checkExistPoint(GridPoint2 point) {
+        return points.contains(point);
+    }
+
+    private GridPoint2 getPoint(Random random) {
+        GridPoint2 point = getRandomPoint(random);
+        while (checkExistPoint(point)) {
+            point = getRandomPoint(random);
+        }
+        points.add(point);
+        return point;
+    }
+
+    public List<AbstractUnmovableLevelObject> generateUnmovableObjects(int countObjects, Random random) {
         List<AbstractUnmovableLevelObject> unmovable = new ArrayList<>();
 
         for (int i = 0; i < countObjects; i++) {
-            GridPoint2 point = new GridPoint2(random.nextInt(height), random.nextInt(width));
-            while (points.contains(point)) {
-                point = new GridPoint2(random.nextInt(height), random.nextInt(width));
-            }
+            GridPoint2 point = getPoint(random);
             unmovable.add(new Tree(point));
         }
         return unmovable;
     }
 
-    public List<AbstractMovableLevelObject> generateMovableObjects(int countObjects, Random random, Set<GridPoint2> points) {
+    public List<AbstractMovableLevelObject> generateMovableObjects(int countObjects, Random random) {
         List<AbstractMovableLevelObject> movable = new ArrayList<>();
 
         for (int i = 0; i < countObjects; i++) {
-            GridPoint2 point = new GridPoint2(random.nextInt(height), random.nextInt(width));
-            while (points.contains(point)) {
-                point = new GridPoint2(random.nextInt(height), random.nextInt(width));
-            }
+            GridPoint2 point = getPoint(random);
             movable.add(new Tank(point));
         }
         return movable;

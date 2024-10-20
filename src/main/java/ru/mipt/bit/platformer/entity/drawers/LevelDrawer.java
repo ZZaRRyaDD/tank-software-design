@@ -65,8 +65,7 @@ public class LevelDrawer implements GraphicObject {
         }
     }
 
-    public void renderMoves(float deltaTime) {
-        float movementSpeed = 0.4f;
+    public void renderMoves(float deltaTime, float movementSpeed) {
         for (Map.Entry<AbstractMovableLevelObject, LevelObjectDrawer> entry : movableDrawers.entrySet()) {
             LevelObjectDrawer drawer = entry.getValue();
             AbstractMovableLevelObject movableObject = entry.getKey();

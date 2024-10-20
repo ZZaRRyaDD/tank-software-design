@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.playerinput.inputs.keyboard;
+package ru.mipt.bit.platformer.playerinput.inputs;
 
 import com.badlogic.gdx.math.GridPoint2;
 

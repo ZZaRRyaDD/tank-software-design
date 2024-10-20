@@ -9,6 +9,7 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
@@ -17,47 +18,62 @@ import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelR
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader;
 import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
-import ru.mipt.bit.platformer.playerinput.inputs.PlayerInputActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard.DefaultKeyboardActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInputActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInput;
-import ru.mipt.bit.platformer.playerinput.inputs.PlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.ai.AIActions;
+import ru.mipt.bit.platformer.playerinput.inputs.ai.AIInput;
+import ru.mipt.bit.platformer.playerinput.inputs.ai.DefaultAIActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.DefaultKeyboardActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.InputActionListener;
 
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
     private LevelDrawer levelDrawer;
-    private PlayerInput input;
+    private InputActionListener playerInput;
+    private InputActionListener aiInput;
+
+    public static void main(String[] args) {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        // level width: 10 tiles x 128px, height: 8 tiles x 128px
+        config.setWindowedMode(1280, 1024);
+        new Lwjgl3Application(new GameDesktopLauncher(), config);
+    }
 
     @Override
     public void create() {
-        input = configureInput();
-
         LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
         level = levelGenerator.generate();
+
+        playerInput = configurePlayerInput();
+        aiInput = configureAIInput();
 
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
         levelDrawer.draw();
     }
 
-    public PlayerInput configureInput() {
-        PlayerInputActions keyboardActions = new KeyboardPlayerInputActions();
+    public InputActionListener configurePlayerInput() {
+        InputActions keyboardActions = new KeyboardPlayerInputActions();
         new DefaultKeyboardActions().registerActions(keyboardActions);
+        return new KeyboardPlayerInput(keyboardActions, level);
+    }
 
-        return new KeyboardPlayerInput(keyboardActions);
+    public InputActionListener configureAIInput() {
+        InputActions aiActions = new AIActions();
+        new DefaultAIActions().registerActions(aiActions);
+        return new AIInput(aiActions, level);
     }
 
     public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
         LevelGenerator levelGeneratorStrategy;
         switch (strategy) {
-            case RANDOM:
-                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
-                break;
             case FROM_FILE_PLAIN_TEXT:
                 LevelReader reader = new PlaintTextLevelReader("src/main/resources/level.txt");
                 LevelParser parser = new PlainTextLevelParser();
                 levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser);
                 break;
+            case RANDOM:
             default:
                 levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
                 break;
@@ -69,9 +85,13 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void render() {
         clearScreen();
 
-        input.getAction().apply(level, level.getFirstMovable());
+        playerInput.getAction(level.getPlayerMovable()).apply();
+        for (AbstractMovableLevelObject obj : level.getBotsMovable()) {
+            aiInput.getAction(obj).apply();
+        }
 
-        levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
+        float movementSpeed = 0.8f, deltaTime = Gdx.graphics.getDeltaTime();
+        levelDrawer.renderMoves(deltaTime, movementSpeed);
         levelDrawer.recordDrawCommand();
     }
 
@@ -98,12 +118,5 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         levelDrawer.dispose();
-    }
-
-    public static void main(String[] args) {
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        // level width: 10 tiles x 128px, height: 8 tiles x 128px
-        config.setWindowedMode(1280, 1024);
-        new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 }
