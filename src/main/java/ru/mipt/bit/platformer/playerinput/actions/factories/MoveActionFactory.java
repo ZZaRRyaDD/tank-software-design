@@ -9,13 +9,15 @@ import ru.mipt.bit.platformer.playerinput.inputs.Direction;
 
 public class MoveActionFactory implements AbstractActionFactory {
     private final Direction direction;
+    private final Level level;
 
-    public MoveActionFactory(Direction direction) {
+    public MoveActionFactory(Direction direction, Level level) {
         this.direction = direction;
+        this.level = level;
     }
 
     @Override
-    public AbstractAction create(Level level, AbstractMovableLevelObject object) {
+    public AbstractAction create(AbstractMovableLevelObject object) {
         return new MoveAction(direction, level, object);
     }
 }

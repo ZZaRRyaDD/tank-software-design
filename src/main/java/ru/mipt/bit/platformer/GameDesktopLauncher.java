@@ -9,7 +9,6 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
@@ -18,21 +17,25 @@ import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelR
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader;
 import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
+import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
+import ru.mipt.bit.platformer.playerinput.inputs.ActionGenerator;
 import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
 import ru.mipt.bit.platformer.playerinput.inputs.ai.AIActions;
-import ru.mipt.bit.platformer.playerinput.inputs.ai.AIInput;
+import ru.mipt.bit.platformer.playerinput.inputs.ai.AI;
 import ru.mipt.bit.platformer.playerinput.inputs.ai.DefaultAIActions;
 import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.DefaultKeyboardActions;
 import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInputActions;
 import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInput;
-import ru.mipt.bit.platformer.playerinput.inputs.InputActionListener;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
     private LevelDrawer levelDrawer;
-    private InputActionListener playerInput;
-    private InputActionListener aiInput;
+    private List<ActionGenerator> actionGenerators;
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -46,23 +49,22 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
         level = levelGenerator.generate();
 
-        playerInput = configurePlayerInput();
-        aiInput = configureAIInput();
+        actionGenerators = new ArrayList<>(Arrays.asList(configurePlayerInput(), configureAIInput()));
 
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
         levelDrawer.draw();
     }
 
-    public InputActionListener configurePlayerInput() {
+    public ActionGenerator configurePlayerInput() {
         InputActions keyboardActions = new KeyboardPlayerInputActions();
-        new DefaultKeyboardActions().registerActions(keyboardActions);
+        new DefaultKeyboardActions(level).registerActions(keyboardActions);
         return new KeyboardPlayerInput(keyboardActions, level);
     }
 
-    public InputActionListener configureAIInput() {
+    public ActionGenerator configureAIInput() {
         InputActions aiActions = new AIActions();
-        new DefaultAIActions().registerActions(aiActions);
-        return new AIInput(aiActions, level);
+        new DefaultAIActions(level).registerActions(aiActions);
+        return new AI(aiActions, level);
     }
 
     public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
@@ -85,10 +87,11 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void render() {
         clearScreen();
 
-        playerInput.getAction(level.getPlayerMovable()).apply();
-        for (AbstractMovableLevelObject obj : level.getBotsMovable()) {
-            aiInput.getAction(obj).apply();
+        List<AbstractAction> actions = new ArrayList<>();
+        for (ActionGenerator generator : actionGenerators) {
+            actions.addAll(generator.getActionList());
         }
+        actions.forEach(AbstractAction::apply);
 
         float movementSpeed = 0.8f, deltaTime = Gdx.graphics.getDeltaTime();
         levelDrawer.renderMoves(deltaTime, movementSpeed);
