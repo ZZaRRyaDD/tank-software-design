@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
 import ru.mipt.bit.platformer.entity.draw.decorators.base.LevelDrawerDecorator;
 import ru.mipt.bit.platformer.entity.draw.decorators.base.Toggle;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.entity.objects.base.Livable;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
 
@@ -41,11 +42,17 @@ public class HealthBarDrawerDecorator extends LevelDrawerDecorator implements To
         renderHealthBar();
     }
 
+    public boolean isLivableObject(GameObject object) {
+        return object instanceof Livable;
+    }
+
     private void renderHealthBar() {
         batch.begin();
-        levelGraphics.getMovableDrawers().forEach((key, value) -> {
-            drawHealthBar(getBatch(), value.getRectangle(), ((Livable) key).getHealth());
-            value.draw(getBatch());
+        levelGraphics.getGraphicObjects().forEach((key, value) -> {
+            if (isLivableObject(key)) {
+                drawHealthBar(getBatch(), value.getRectangle(), ((Livable) key).getHealth());
+                value.draw(getBatch());
+            }
         });
         batch.end();
     }

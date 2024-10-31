@@ -1,9 +1,8 @@
-package ru.mipt.bit.platformer.playerinput.inputs.keyboard_player;
+package ru.mipt.bit.platformer.playerinput.inputs.player;
 
-import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
-import ru.mipt.bit.platformer.entity.draw.decorators.base.Toggle;
 import ru.mipt.bit.platformer.entity.objects.Level;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.actions.factories.MoveActionFactory;
 import ru.mipt.bit.platformer.playerinput.actions.factories.ToggleActionFactory;
@@ -16,12 +15,11 @@ import java.util.Map;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
-public class DefaultKeyboardActions implements DefaultInputActions {
+public class DefaultPlayerInputActions implements DefaultInputActions {
     private final Map<Integer, AbstractActionFactory> associationKeys = new HashMap<>();
 
-    public DefaultKeyboardActions(Level level, LevelGraphic levelGraphic) {
+    public DefaultPlayerInputActions(Level level) {
         setMoves(level);
-        setDrawActions(levelGraphic);
     }
 
     private void setMoves(Level level) {
@@ -33,10 +31,6 @@ public class DefaultKeyboardActions implements DefaultInputActions {
         associationKeys.put(W, new MoveActionFactory(Direction.UP, level));
         associationKeys.put(DOWN, new MoveActionFactory(Direction.DOWN, level));
         associationKeys.put(S, new MoveActionFactory(Direction.DOWN, level));
-    }
-
-    private void setDrawActions(LevelGraphic levelGraphic) {
-        associationKeys.put(L, new ToggleActionFactory(levelGraphic));
     }
 
     @Override

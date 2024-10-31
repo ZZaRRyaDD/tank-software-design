@@ -4,13 +4,26 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
+import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
 import ru.mipt.bit.platformer.entity.draw.decorators.HealthBarDrawerDecorator;
+import ru.mipt.bit.platformer.entity.draw.drawers.factories.ObstacleDrawerFactory;
+import ru.mipt.bit.platformer.entity.draw.drawers.factories.TankDrawerFactory;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.draw.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.objects.Obstacle;
+import ru.mipt.bit.platformer.entity.objects.Tank;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
@@ -25,12 +38,15 @@ import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
 import ru.mipt.bit.platformer.playerinput.inputs.ai.AIActions;
 import ru.mipt.bit.platformer.playerinput.inputs.ai.AI;
 import ru.mipt.bit.platformer.playerinput.inputs.ai.DefaultAIActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.DefaultKeyboardActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInputActions;
-import ru.mipt.bit.platformer.playerinput.inputs.keyboard_player.KeyboardPlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.graphic.DefaultGraphicActions;
+import ru.mipt.bit.platformer.playerinput.inputs.graphic.Graphic;
+import ru.mipt.bit.platformer.playerinput.inputs.graphic.GraphicActions;
+import ru.mipt.bit.platformer.playerinput.inputs.player.DefaultPlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.player.PlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.player.PlayerInput;
+import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -48,25 +64,76 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
-        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
-        level = levelGenerator.generate();
+        createLevel();
+    }
 
-        levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
+    public void createLevel() {
+        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
+        levelGenerator.generate();
+        level = levelGenerator.getLevel();
+
+        createLevelGraphic(level);
+
+        initActionGenerators(levelGenerator, levelDrawer);
+    }
+
+    public void createLevelGraphic(Level level) {
+        TiledMap map = new TmxMapLoader().load("level.tmx");
+        Batch batch = new SpriteBatch();
+        MapRenderer renderer = createSingleLayerMapRenderer(map, batch);
+        TiledMapTileLayer groundLayer = getSingleLayer(map);
+        TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+
+        levelDrawer = new LevelDrawer(map, renderer, batch, level);
         levelDrawer = new HealthBarDrawerDecorator(levelDrawer);
 
-        actionGenerators = new ArrayList<>(Arrays.asList(configurePlayerInput(), configureAIInput()));
+        initGraphicFactories(levelDrawer, tileMovement, groundLayer);
+        addGraphicObjects(levelDrawer, level);
     }
 
-    public ActionGenerator configurePlayerInput() {
-        InputActions keyboardActions = new KeyboardPlayerInputActions();
-        new DefaultKeyboardActions(level, levelDrawer).registerActions(keyboardActions);
-        return new KeyboardPlayerInput(keyboardActions, level);
+    public void initGraphicFactories(LevelGraphic levelDrawer, TileMovement tileMovement, TiledMapTileLayer groundLayer ) {
+        levelDrawer.addStrategyGraphics(
+                Tank.class,
+                new TankDrawerFactory("images/blueTank.png", tileMovement)
+        );
+        levelDrawer.addStrategyGraphics(
+                Obstacle.class,
+                new ObstacleDrawerFactory("images/greenTree.png", groundLayer)
+        );
     }
 
-    public ActionGenerator configureAIInput() {
+    public void addGraphicObjects(LevelGraphic levelDrawer, Level level) {
+        for (GameObject object : level.getGameObjects()) {
+            levelDrawer.addGraphicObject(object);
+        }
+    }
+
+    public void initActionGenerators(LevelGenerator levelGenerator, LevelGraphic levelDrawer) {
+        actionGenerators = new ArrayList<>();
+        configurePlayerActionController(actionGenerators, levelGenerator.getLevel(), levelGenerator.getPlayerTank());
+        configureAIActionController(actionGenerators, levelGenerator.getLevel(), levelGenerator.getAITanks());
+        configureGraphicActionController(actionGenerators, levelDrawer);
+    }
+
+    public void configurePlayerActionController(List<ActionGenerator> actionGenerators, Level level, Tank object) {
+        InputActions keyboardActions = new PlayerInputActions();
+        new DefaultPlayerInputActions(level).registerActions(keyboardActions);
+        actionGenerators.add(new PlayerInput(keyboardActions, object));
+    }
+
+    public void configureAIActionController(List<ActionGenerator> actionGenerators, Level level, List<Tank> objects) {
         InputActions aiActions = new AIActions();
         new DefaultAIActions(level).registerActions(aiActions);
-        return new AI(aiActions, level);
+
+        for (GameObject object : objects) {
+            actionGenerators.add(new AI(aiActions, object));
+        }
+    }
+
+    public void configureGraphicActionController(List<ActionGenerator> actionGenerators, LevelGraphic levelDrawer) {
+        InputActions graphicActions = new GraphicActions();
+        new DefaultGraphicActions().registerActions(graphicActions);
+        actionGenerators.add(new Graphic(graphicActions, levelDrawer));
     }
 
     public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
@@ -91,12 +158,11 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         List<AbstractAction> actions = new ArrayList<>();
         for (ActionGenerator generator : actionGenerators) {
-            actions.addAll(generator.getActionList());
+            actions.addAll(generator.getActions());
         }
         actions.forEach(AbstractAction::apply);
 
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        level.updateState(deltaTime);
+        level.updateState(Gdx.graphics.getDeltaTime());
         levelDrawer.render();
     }
 

@@ -2,90 +2,55 @@ package ru.mipt.bit.platformer.entity.draw.drawers;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Interpolation;
 
 import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
+import ru.mipt.bit.platformer.entity.draw.base.GraphicFactory;
 import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
 import ru.mipt.bit.platformer.entity.objects.*;
-import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class LevelDrawer implements LevelGraphic {
     private final Batch batch;
-    private final String filePath;
     private TiledMap map;
     private MapRenderer renderer;
-    private TiledMapTileLayer groundLayer;
-    private TileMovement tileMovement;
     private final Level level;
-    private final Map<Tank, GameObjectGraphic> movableDrawers = new HashMap<>();
-    private final Map<Obstacle, GameObjectGraphic> unmovableDrawers = new HashMap<>();
+    private final Map<Class<? extends GameObject>, GraphicFactory> strategyGraphics = new HashMap<>();
+    private final Map<GameObject, GameObjectGraphic> graphicObjects = new HashMap<>();
 
-    public LevelDrawer(String filePath, Batch batch, Level level) {
-        this.filePath = filePath;
-        this.batch = batch;
+    public LevelDrawer(TiledMap map, MapRenderer renderer, Batch batch, Level level) {
+        this.map = map;
+        this.renderer = renderer;
         this.level = level;
-        this.batch.begin();
-        drawLevel();
-        drawMovable();
-        drawUnmovable();
-        this.batch.end();
-    }
-
-    public void drawLevel() {
-        this.map = new TmxMapLoader().load(this.filePath);
-        this.renderer = createSingleLayerMapRenderer(this.map, this.batch);
-        this.groundLayer = getSingleLayer(this.map);
-        this.tileMovement = new TileMovement(this.groundLayer, Interpolation.smooth);
-    }
-
-    public void drawMovable() {
-        for (Tank obj : level.getMovable()) {
-            GameObjectGraphic movableDrawer = new TankDrawer("images/blueTank.png", obj, this.tileMovement);
-            movableDrawers.put(obj, movableDrawer);
-            movableDrawer.draw(getBatch());
-        }
-    }
-
-    public void drawUnmovable() {
-        for (Obstacle obj : level.getUnmovable()) {
-            GameObjectGraphic unmovableDrawer = new ObstacleDrawer("images/greenTree.png", obj, groundLayer);
-            unmovableDrawers.put(obj, unmovableDrawer);
-            unmovableDrawer.draw(getBatch());
-        }
-    }
-
-    public Map<Tank, GameObjectGraphic> getMovableDrawers() {
-        return movableDrawers;
+        this.batch = batch;
     }
 
     public Batch getBatch() {
         return batch;
     }
 
-    private void renderMovableObjects() {
-        for (GameObjectGraphic drawer : movableDrawers.values()) {
-            drawer.draw(getBatch());
-        }
+    @Override
+    public void addStrategyGraphics(Class<? extends GameObject> clazz, GraphicFactory gameObjectGraphic) {
+        strategyGraphics.put(clazz, gameObjectGraphic);
     }
 
-    private void renderUnmovableObjects() {
-        for (GameObjectGraphic drawer : unmovableDrawers.values()) {
-            drawer.draw(getBatch());
-        }
+    @Override
+    public void addGraphicObject(GameObject object) {
+        GameObjectGraphic gameObjectGraphic = strategyGraphics.get(object.getClass()).create(object);
+        graphicObjects.put(object, gameObjectGraphic);
+    }
+
+    public Map<GameObject, GameObjectGraphic> getGraphicObjects() {
+        return graphicObjects;
     }
 
     public void renderObjects() {
-        renderMovableObjects();
-        renderUnmovableObjects();
+        for (GameObjectGraphic drawer : graphicObjects.values()) {
+            drawer.draw(getBatch());
+        }
     }
 
     public void render() {
@@ -96,11 +61,7 @@ public class LevelDrawer implements LevelGraphic {
     }
 
     public void dispose() {
-        for (GameObjectGraphic drawer : movableDrawers.values()) {
-            drawer.dispose();
-        }
-
-        for (GameObjectGraphic drawer : unmovableDrawers.values()) {
+        for (GameObjectGraphic drawer : graphicObjects.values()) {
             drawer.dispose();
         }
 

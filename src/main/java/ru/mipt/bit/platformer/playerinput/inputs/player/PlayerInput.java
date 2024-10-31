@@ -1,5 +1,6 @@
-package ru.mipt.bit.platformer.playerinput.inputs.ai;
+package ru.mipt.bit.platformer.playerinput.inputs.player;
 
+import com.badlogic.gdx.Gdx;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
@@ -8,19 +9,23 @@ import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
 
 import java.util.*;
 
-public class AI implements ActionGenerator {
+public class PlayerInput implements ActionGenerator {
     private final InputActions inputActions;
     private final GameObject object;
 
-    public AI(InputActions actions, GameObject object) {
+    public PlayerInput(InputActions actions, GameObject object) {
         this.inputActions = actions;
         this.object = object;
     }
 
     @Override
     public AbstractAction getAction() {
-        List<AbstractActionFactory> actions = new ArrayList<>(inputActions.getKeyActions().values());
-        return actions.get(new Random().nextInt(actions.size())).create(object);
+        for (Map.Entry<Integer, AbstractActionFactory> entry : inputActions.getKeyActions().entrySet()) {
+            if (Gdx.input.isKeyPressed(entry.getKey())) {
+                return entry.getValue().create(object);
+            }
+        }
+        return null;
     }
 
     @Override

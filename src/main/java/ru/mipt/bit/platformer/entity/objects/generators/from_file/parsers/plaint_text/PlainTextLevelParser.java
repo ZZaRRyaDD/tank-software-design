@@ -10,8 +10,8 @@ import java.util.List;
 
 public class PlainTextLevelParser implements LevelParser {
 
-    private List<Tank> movable = new ArrayList<>();
-    private List<Obstacle> unmovable = new ArrayList<>();
+    private final List<Tank> tanks = new ArrayList<>();
+    private final List<Obstacle> obstacles = new ArrayList<>();
     private Integer height;
     private Integer width;
 
@@ -20,8 +20,8 @@ public class PlainTextLevelParser implements LevelParser {
         width = lines.size();
         height = lines.get(0).length();
 
-        movable.clear();
-        unmovable.clear();
+        tanks.clear();
+        obstacles.clear();
         int xCoordinate, yCoordinate = lines.size();
         for (String line : lines) {
             xCoordinate = 0;
@@ -31,10 +31,10 @@ public class PlainTextLevelParser implements LevelParser {
                     case '_':
                         continue;
                     case 'T':
-                        unmovable.add(new Obstacle(new GridPoint2(xCoordinate, yCoordinate)));
+                        obstacles.add(new Obstacle(new GridPoint2(xCoordinate, yCoordinate)));
                         break;
                     case 'X':
-                        movable.add(new Tank(new GridPoint2(xCoordinate, yCoordinate), 100));
+                        tanks.add(new Tank(new GridPoint2(xCoordinate, yCoordinate), 100));
                         break;
                 }
             }
@@ -43,13 +43,13 @@ public class PlainTextLevelParser implements LevelParser {
     }
 
     @Override
-    public List<Tank> getMovableLevelObjects() {
-        return movable;
+    public List<Tank> getTanks() {
+        return tanks;
     }
 
     @Override
-    public List<Obstacle> getUnmovableLevelObjects() {
-        return unmovable;
+    public List<Obstacle> getObstacles() {
+        return obstacles;
     }
 
     @Override

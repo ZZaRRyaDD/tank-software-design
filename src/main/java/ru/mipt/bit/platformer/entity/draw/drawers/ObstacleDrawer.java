@@ -7,9 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
-import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
-import ru.mipt.bit.platformer.util.TileMovement;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
@@ -39,10 +37,6 @@ public class ObstacleDrawer implements GameObjectGraphic  {
     @Override
     public Rectangle getRectangle() {
         return rectangle;
-    }
-
-    public TextureRegion getTextureRegion() {
-        return textureRegion;
     }
 
     @Override

@@ -1,72 +1,45 @@
 package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
-    private final List<Tank> movable;
-    private final List<Obstacle> unmovable;
+    private final List<GameObject> gameObjects = new ArrayList<>();;
     private final Integer height;
     private final Integer width;
 
-    public Level(List<Tank> movable, List<Obstacle> unmovable, Integer height, Integer width) {
-        this.movable = movable;
-        this.unmovable = unmovable;
+    public Level(Integer height, Integer width) {
         this.height = height;
         this.width = width;
     }
 
-    public List<Tank> getMovable() {
-        return movable;
+    public void addGameObject(GameObject object) {
+        gameObjects.add(object);
     }
 
-    public Tank getPlayerMovable() {
-        return movable.get(0);
-    }
-
-    public List<Tank> getBotsMovable() {
-        return movable.subList(1, movable.size());
-    }
-
-    public List<Obstacle> getUnmovable() {
-        return unmovable;
+    public List<GameObject> getGameObjects() {
+        return gameObjects;
     }
 
     public boolean isFreePoint(GridPoint2 point) {
-        return checkUnmovableObjects(point) && checkMovableObjects(point);
+        for (GameObject object : gameObjects) {
+            if (object.isBusyCoordinate(point)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean intoMapBorder(GridPoint2 point) {
         return (0 <= point.x && point.x < width) && (0 <= point.y && point.y < height);
     }
 
-    private boolean checkMovableObjects(GridPoint2 point) {
-        for (Tank obj : getMovable()) {
-            if (obj.getCoordinates().equals(point) || obj.getDestinationCoordinates().equals(point)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean checkUnmovableObjects(GridPoint2 point) {
-        for (Obstacle obj : getUnmovable()) {
-            if (obj.getCoordinates().equals(point)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
     public void updateState(float deltaTime) {
-        for (Tank obj : getMovable()) {
-            obj.updateState(deltaTime);
-        }
-
-        for (Obstacle obj : getUnmovable()) {
-            obj.updateState(deltaTime);
+        for (GameObject object : gameObjects) {
+            object.updateState(deltaTime);
         }
     }
 }

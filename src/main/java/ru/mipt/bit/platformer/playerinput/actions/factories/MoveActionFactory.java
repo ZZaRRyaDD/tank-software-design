@@ -1,14 +1,14 @@
 package ru.mipt.bit.platformer.playerinput.actions.factories;
 
-import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.objects.Level;
-import ru.mipt.bit.platformer.entity.objects.Tank;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
+import ru.mipt.bit.platformer.entity.objects.base.Movable;
 import ru.mipt.bit.platformer.playerinput.actions.actions.MoveAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.inputs.Direction;
 
-public class MoveActionFactory implements AbstractActionFactory<Tank> {
+public class MoveActionFactory implements AbstractActionFactory<GameObject> {
     private final Direction direction;
     private final Level level;
 
@@ -18,7 +18,7 @@ public class MoveActionFactory implements AbstractActionFactory<Tank> {
     }
 
     @Override
-    public AbstractAction create(Tank object) {
-        return new MoveAction(direction, level, object);
+    public AbstractAction create(GameObject object) {
+        return new MoveAction(direction, level, (Movable) object);
     }
 }

@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface LevelParser {
     void parse(List<String> lines);
-    List<Tank> getMovableLevelObjects();
-    List<Obstacle> getUnmovableLevelObjects();
+    List<Tank> getTanks();
+    List<Obstacle> getObstacles();
     Integer getHeight();
     Integer getWidth();
 }

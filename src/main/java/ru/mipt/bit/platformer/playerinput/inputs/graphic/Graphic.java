@@ -1,26 +1,33 @@
-package ru.mipt.bit.platformer.playerinput.inputs.ai;
+package ru.mipt.bit.platformer.playerinput.inputs.graphic;
 
-import ru.mipt.bit.platformer.entity.objects.base.GameObject;
+import com.badlogic.gdx.Gdx;
+import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.inputs.ActionGenerator;
 import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class AI implements ActionGenerator {
+public class Graphic implements ActionGenerator {
     private final InputActions inputActions;
-    private final GameObject object;
+    private final LevelGraphic levelGraphic;
 
-    public AI(InputActions actions, GameObject object) {
+    public Graphic(InputActions actions, LevelGraphic levelGraphic) {
         this.inputActions = actions;
-        this.object = object;
+        this.levelGraphic = levelGraphic;
     }
 
     @Override
     public AbstractAction getAction() {
-        List<AbstractActionFactory> actions = new ArrayList<>(inputActions.getKeyActions().values());
-        return actions.get(new Random().nextInt(actions.size())).create(object);
+        for (Map.Entry<Integer, AbstractActionFactory> entry : inputActions.getKeyActions().entrySet()) {
+            if (Gdx.input.isKeyPressed(entry.getKey())) {
+                return entry.getValue().create(levelGraphic);
+            }
+        }
+        return null;
     }
 
     @Override
