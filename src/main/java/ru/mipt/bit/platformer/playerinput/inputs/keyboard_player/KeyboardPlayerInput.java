@@ -1,8 +1,10 @@
 package ru.mipt.bit.platformer.playerinput.inputs.keyboard_player;
 
 import com.badlogic.gdx.Gdx;
+import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.objects.Level;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.Tank;
+import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.actions.factories.EmptyActionFactory;
@@ -26,7 +28,7 @@ public class KeyboardPlayerInput implements ActionGenerator {
     }
 
     @Override
-    public AbstractAction getAction(AbstractMovableLevelObject object) {
+    public AbstractAction getAction(Tank object) {
         for (Map.Entry<Integer, AbstractActionFactory> entry : inputActions.getKeyActions().entrySet()) {
             if (Gdx.input.isKeyPressed(entry.getKey())) {
                 return entry.getValue().create(object);

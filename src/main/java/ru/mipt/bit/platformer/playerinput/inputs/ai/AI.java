@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.playerinput.inputs.ai;
 
 import ru.mipt.bit.platformer.entity.objects.Level;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.inputs.ActionGenerator;
@@ -19,7 +19,7 @@ public class AI implements ActionGenerator {
     }
 
     @Override
-    public AbstractAction getAction(AbstractMovableLevelObject object) {
+    public AbstractAction getAction(Tank object) {
         List<AbstractActionFactory> actions = new ArrayList<>(inputActions.getKeyActions().values());
         return actions.get(new Random().nextInt(actions.size())).create(object);
     }
@@ -27,7 +27,7 @@ public class AI implements ActionGenerator {
     @Override
     public List<AbstractAction> getActionList() {
         List<AbstractAction> actions = new ArrayList<>();
-        for (AbstractMovableLevelObject object : level.getBotsMovable()) {
+        for (Tank object : level.getBotsMovable()) {
             actions.add(getAction(object));
         }
         return actions;

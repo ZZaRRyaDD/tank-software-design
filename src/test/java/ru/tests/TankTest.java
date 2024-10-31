@@ -14,14 +14,14 @@ public class TankTest {
     public void testTankMoveToNewDirectionWithCoordinates(Direction direction){
         GridPoint2 directionPoint = direction.getDirectionPoint();
 
-        Tank tank = new Tank(new GridPoint2(1, 0));
-        tank.move(direction);
+        Tank tank = new Tank(new GridPoint2(1, 0), 100);
+        tank.move(direction, true);
 
         GridPoint2 targetCoordinates = tank.getCoordinates();
         targetCoordinates.add(directionPoint.x, directionPoint.y);
 
         assertEquals(targetCoordinates, tank.getDestinationCoordinates());
-        assertEquals(direction.getDirectionRotation(), tank.getRotation());
+        assertEquals(direction.getDirectionRotation(), tank.getDirection().getDirectionRotation());
     }
 
     @ParameterizedTest
@@ -30,18 +30,17 @@ public class TankTest {
         GridPoint2 directionPoint = direction.getDirectionPoint();
         float directionRotation = direction.getDirectionRotation();
 
-        Tank tank = new Tank(new GridPoint2(1, 0));
+        Tank tank = new Tank(new GridPoint2(1, 0), 100);
         float deltaTime = 1f;
-        float movementSpeed = 0.4f;
 
         GridPoint2 targetCoordinates = tank.getCoordinates();
         targetCoordinates.add(directionPoint.x, directionPoint.y);
 
-        tank.move(direction);
-        tank.updateState(deltaTime, movementSpeed);
+        tank.move(direction, true);
+        tank.updateState(deltaTime);
 
         assertEquals(targetCoordinates, tank.getCoordinates());
         assertEquals(targetCoordinates, tank.getDestinationCoordinates());
-        assertEquals(directionRotation, tank.getRotation());
+        assertEquals(directionRotation, tank.getDirection().getDirectionRotation());
     }
 }

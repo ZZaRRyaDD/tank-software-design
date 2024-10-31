@@ -3,9 +3,7 @@ package ru.mipt.bit.platformer.entity.objects.generators.random;
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.objects.Tank;
-import ru.mipt.bit.platformer.entity.objects.Tree;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 
 import java.util.*;
@@ -26,8 +24,8 @@ public class RandomLevelGenerator implements LevelGenerator {
         points.clear();
         Random random = new Random();
 
-        List<AbstractUnmovableLevelObject> unmovable = generateUnmovableObjects(5, random);
-        List<AbstractMovableLevelObject> movable = generateMovableObjects(3, random);
+        List<Obstacle> unmovable = generateUnmovableObjects(5, random);
+        List<Tank> movable = generateMovableObjects(3, random);
         return new Level(movable, unmovable, height, width);
     }
 
@@ -48,22 +46,22 @@ public class RandomLevelGenerator implements LevelGenerator {
         return point;
     }
 
-    public List<AbstractUnmovableLevelObject> generateUnmovableObjects(int countObjects, Random random) {
-        List<AbstractUnmovableLevelObject> unmovable = new ArrayList<>();
+    public List<Obstacle> generateUnmovableObjects(int countObjects, Random random) {
+        List<Obstacle> unmovable = new ArrayList<>();
 
         for (int i = 0; i < countObjects; i++) {
             GridPoint2 point = getPoint(random);
-            unmovable.add(new Tree(point));
+            unmovable.add(new Obstacle(point));
         }
         return unmovable;
     }
 
-    public List<AbstractMovableLevelObject> generateMovableObjects(int countObjects, Random random) {
-        List<AbstractMovableLevelObject> movable = new ArrayList<>();
+    public List<Tank> generateMovableObjects(int countObjects, Random random) {
+        List<Tank> movable = new ArrayList<>();
 
         for (int i = 0; i < countObjects; i++) {
             GridPoint2 point = getPoint(random);
-            movable.add(new Tank(point));
+            movable.add(new Tank(point, 100));
         }
         return movable;
     }

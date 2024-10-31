@@ -7,8 +7,10 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
+import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.draw.decorators.HealthBarDrawerDecorator;
 import ru.mipt.bit.platformer.entity.objects.Level;
-import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.draw.drawers.LevelDrawer;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
@@ -34,7 +36,7 @@ import java.util.List;
 
 public class GameDesktopLauncher implements ApplicationListener {
     private Level level;
-    private LevelDrawer levelDrawer;
+    private LevelGraphic levelDrawer;
     private List<ActionGenerator> actionGenerators;
 
     public static void main(String[] args) {
@@ -49,15 +51,15 @@ public class GameDesktopLauncher implements ApplicationListener {
         LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
         level = levelGenerator.generate();
 
-        actionGenerators = new ArrayList<>(Arrays.asList(configurePlayerInput(), configureAIInput()));
-
         levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
-        levelDrawer.draw();
+        levelDrawer = new HealthBarDrawerDecorator(levelDrawer);
+
+        actionGenerators = new ArrayList<>(Arrays.asList(configurePlayerInput(), configureAIInput()));
     }
 
     public ActionGenerator configurePlayerInput() {
         InputActions keyboardActions = new KeyboardPlayerInputActions();
-        new DefaultKeyboardActions(level).registerActions(keyboardActions);
+        new DefaultKeyboardActions(level, levelDrawer).registerActions(keyboardActions);
         return new KeyboardPlayerInput(keyboardActions, level);
     }
 
@@ -93,9 +95,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         actions.forEach(AbstractAction::apply);
 
-        float movementSpeed = 0.8f, deltaTime = Gdx.graphics.getDeltaTime();
-        levelDrawer.renderMoves(deltaTime, movementSpeed);
-        levelDrawer.recordDrawCommand();
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        level.updateState(deltaTime);
+        levelDrawer.render();
     }
 
     public void clearScreen() {

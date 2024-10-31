@@ -2,9 +2,7 @@ package ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.plain
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.entity.objects.Tank;
-import ru.mipt.bit.platformer.entity.objects.Tree;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
-import ru.mipt.bit.platformer.entity.objects.base.AbstractUnmovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
 
 import java.util.ArrayList;
@@ -12,8 +10,8 @@ import java.util.List;
 
 public class PlainTextLevelParser implements LevelParser {
 
-    private List<AbstractMovableLevelObject> movable = new ArrayList<>();
-    private List<AbstractUnmovableLevelObject> unmovable = new ArrayList<>();
+    private List<Tank> movable = new ArrayList<>();
+    private List<Obstacle> unmovable = new ArrayList<>();
     private Integer height;
     private Integer width;
 
@@ -33,10 +31,10 @@ public class PlainTextLevelParser implements LevelParser {
                     case '_':
                         continue;
                     case 'T':
-                        unmovable.add(new Tree(new GridPoint2(xCoordinate, yCoordinate)));
+                        unmovable.add(new Obstacle(new GridPoint2(xCoordinate, yCoordinate)));
                         break;
                     case 'X':
-                        movable.add(new Tank(new GridPoint2(xCoordinate, yCoordinate)));
+                        movable.add(new Tank(new GridPoint2(xCoordinate, yCoordinate), 100));
                         break;
                 }
             }
@@ -45,12 +43,12 @@ public class PlainTextLevelParser implements LevelParser {
     }
 
     @Override
-    public List<AbstractMovableLevelObject> getMovableLevelObjects() {
+    public List<Tank> getMovableLevelObjects() {
         return movable;
     }
 
     @Override
-    public List<AbstractUnmovableLevelObject> getUnmovableLevelObjects() {
+    public List<Obstacle> getUnmovableLevelObjects() {
         return unmovable;
     }
 

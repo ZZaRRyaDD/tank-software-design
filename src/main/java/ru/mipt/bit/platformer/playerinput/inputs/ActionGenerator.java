@@ -1,11 +1,11 @@
 package ru.mipt.bit.platformer.playerinput.inputs;
 
-import ru.mipt.bit.platformer.entity.objects.base.AbstractMovableLevelObject;
+import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 
 import java.util.List;
 
 public interface ActionGenerator {
     List<AbstractAction> getActionList();
-    AbstractAction getAction(AbstractMovableLevelObject object);
+    AbstractAction getAction(Tank object);
 }
