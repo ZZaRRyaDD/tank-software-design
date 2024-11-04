@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.playerinput.actions.actions;
 
-import ru.mipt.bit.platformer.entity.draw.decorators.base.Toggle;
+import ru.mipt.bit.platformer.entity.drawers.decorators.base.Toggle;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 
 public class ToggleAction implements AbstractAction {

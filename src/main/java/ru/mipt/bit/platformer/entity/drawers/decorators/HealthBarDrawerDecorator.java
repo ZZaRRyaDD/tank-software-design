@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.entity.draw.decorators;
+package ru.mipt.bit.platformer.entity.drawers.decorators;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
-import ru.mipt.bit.platformer.entity.draw.decorators.base.LevelDrawerDecorator;
-import ru.mipt.bit.platformer.entity.draw.decorators.base.Toggle;
+import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.drawers.decorators.base.LevelDrawerDecorator;
+import ru.mipt.bit.platformer.entity.drawers.decorators.base.Toggle;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.entity.objects.base.Livable;
 import ru.mipt.bit.platformer.util.GdxGameUtils;

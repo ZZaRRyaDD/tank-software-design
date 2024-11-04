@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.entity.draw.base;
+package ru.mipt.bit.platformer.entity.drawers.base;
 
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 

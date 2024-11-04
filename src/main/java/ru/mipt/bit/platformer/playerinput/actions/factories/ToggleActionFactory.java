@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.playerinput.actions.factories;
 
-import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
-import ru.mipt.bit.platformer.entity.draw.decorators.base.Toggle;
+import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.drawers.decorators.base.Toggle;
 import ru.mipt.bit.platformer.playerinput.actions.actions.ToggleAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;

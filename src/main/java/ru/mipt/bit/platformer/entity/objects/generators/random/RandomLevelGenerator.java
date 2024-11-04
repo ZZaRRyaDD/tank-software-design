@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.entity.objects.generators.random;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entity.listener.LevelListener;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
@@ -9,17 +10,18 @@ import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import java.util.*;
 
 public class RandomLevelGenerator implements LevelGenerator {
-
     private final int height;
     private final int width;
     private final Set<GridPoint2> points = new HashSet<>();
     private List<Obstacle> obstacles;
     private List<Tank> tanks;
     private Level level;
+    private final List<LevelListener> listeners;
 
-    public RandomLevelGenerator(int height, int width) {
+    public RandomLevelGenerator(int height, int width, List<LevelListener> listeners) {
         this.height = height;
         this.width = width;
+        this.listeners = listeners;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class RandomLevelGenerator implements LevelGenerator {
         points.clear();
         Random random = new Random();
 
-        level = new Level(height, width);
+        level = new Level(height, width, listeners);
         generateObstacles(5, random);
         generateTanks(3, random);
     }

@@ -1,8 +1,8 @@
-package ru.mipt.bit.platformer.entity.draw.drawers.factories;
+package ru.mipt.bit.platformer.entity.drawers.drawers.factories;
 
-import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
-import ru.mipt.bit.platformer.entity.draw.base.GraphicFactory;
-import ru.mipt.bit.platformer.entity.draw.drawers.TankDrawer;
+import ru.mipt.bit.platformer.entity.drawers.base.GameObjectGraphic;
+import ru.mipt.bit.platformer.entity.drawers.base.GraphicFactory;
+import ru.mipt.bit.platformer.entity.drawers.drawers.TankDrawer;
 import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.util.TileMovement;

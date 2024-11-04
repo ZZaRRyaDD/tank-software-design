@@ -1,9 +1,9 @@
-package ru.mipt.bit.platformer.entity.draw.decorators.base;
+package ru.mipt.bit.platformer.entity.drawers.decorators.base;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
-import ru.mipt.bit.platformer.entity.draw.base.GraphicFactory;
-import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.drawers.base.GameObjectGraphic;
+import ru.mipt.bit.platformer.entity.drawers.base.GraphicFactory;
+import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 
 import java.util.Map;
@@ -27,11 +27,6 @@ public abstract class LevelDrawerDecorator implements LevelGraphic {
     }
 
     @Override
-    public void addGraphicObject(GameObject object) {
-        levelGraphics.addGraphicObject(object);
-    }
-
-    @Override
     public void addStrategyGraphics(Class<? extends GameObject> clazz, GraphicFactory graphicsFactory) {
         levelGraphics.addStrategyGraphics(clazz, graphicsFactory);
     }
@@ -39,5 +34,15 @@ public abstract class LevelDrawerDecorator implements LevelGraphic {
     @Override
     public Map<GameObject, GameObjectGraphic> getGraphicObjects() {
         return levelGraphics.getGraphicObjects();
+    }
+
+    @Override
+    public void onAddGameObject(GameObject object) {
+        levelGraphics.onAddGameObject(object);
+    }
+
+    @Override
+    public void onDeleteGameObject(GameObject object) {
+        levelGraphics.onDeleteGameObject(object);
     }
 }

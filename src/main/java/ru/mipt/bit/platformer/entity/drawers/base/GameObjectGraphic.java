@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.entity.draw.base;
+package ru.mipt.bit.platformer.entity.drawers.base;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;

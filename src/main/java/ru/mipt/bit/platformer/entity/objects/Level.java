@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.entity.listener.LevelListener;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 
 import java.util.ArrayList;
@@ -10,18 +11,17 @@ public class Level {
     private final List<GameObject> gameObjects = new ArrayList<>();;
     private final Integer height;
     private final Integer width;
+    private List<LevelListener> listeners;
 
-    public Level(Integer height, Integer width) {
+    public Level(Integer height, Integer width, List<LevelListener> listeners) {
         this.height = height;
         this.width = width;
+        this.listeners = listeners;
     }
 
     public void addGameObject(GameObject object) {
         gameObjects.add(object);
-    }
-
-    public List<GameObject> getGameObjects() {
-        return gameObjects;
+        listeners.forEach(listener -> listener.onAddGameObject(object));
     }
 
     public boolean isFreePoint(GridPoint2 point) {

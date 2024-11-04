@@ -1,11 +1,11 @@
-package ru.mipt.bit.platformer.entity.draw.drawers;
+package ru.mipt.bit.platformer.entity.drawers.drawers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.entity.draw.base.GameObjectGraphic;
+import ru.mipt.bit.platformer.entity.drawers.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.util.GdxGameUtils;
 

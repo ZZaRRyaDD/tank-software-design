@@ -15,12 +15,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
-import ru.mipt.bit.platformer.entity.draw.decorators.HealthBarDrawerDecorator;
-import ru.mipt.bit.platformer.entity.draw.drawers.factories.ObstacleDrawerFactory;
-import ru.mipt.bit.platformer.entity.draw.drawers.factories.TankDrawerFactory;
+import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.drawers.decorators.HealthBarDrawerDecorator;
+import ru.mipt.bit.platformer.entity.drawers.drawers.factories.ObstacleDrawerFactory;
+import ru.mipt.bit.platformer.entity.drawers.drawers.factories.TankDrawerFactory;
+import ru.mipt.bit.platformer.entity.listener.LevelListener;
 import ru.mipt.bit.platformer.entity.objects.Level;
-import ru.mipt.bit.platformer.entity.draw.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.drawers.drawers.LevelDrawer;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
@@ -47,6 +48,8 @@ import ru.mipt.bit.platformer.playerinput.inputs.player.PlayerInput;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -64,31 +67,31 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void create() {
+        createLevelGraphic();
         createLevel();
     }
 
     public void createLevel() {
-        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
+        List<LevelListener> listeners = Arrays.asList(levelDrawer);
+        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM, listeners);
         levelGenerator.generate();
-        level = levelGenerator.getLevel();
 
-        createLevelGraphic(level);
+        level = levelGenerator.getLevel();
 
         initActionGenerators(levelGenerator, levelDrawer);
     }
 
-    public void createLevelGraphic(Level level) {
+    public void createLevelGraphic() {
         TiledMap map = new TmxMapLoader().load("level.tmx");
         Batch batch = new SpriteBatch();
         MapRenderer renderer = createSingleLayerMapRenderer(map, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(map);
         TileMovement tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
 
-        levelDrawer = new LevelDrawer(map, renderer, batch, level);
+        levelDrawer = new LevelDrawer(map, renderer, batch);
         levelDrawer = new HealthBarDrawerDecorator(levelDrawer);
 
         initGraphicFactories(levelDrawer, tileMovement, groundLayer);
-        addGraphicObjects(levelDrawer, level);
     }
 
     public void initGraphicFactories(LevelGraphic levelDrawer, TileMovement tileMovement, TiledMapTileLayer groundLayer ) {
@@ -100,12 +103,6 @@ public class GameDesktopLauncher implements ApplicationListener {
                 Obstacle.class,
                 new ObstacleDrawerFactory("images/greenTree.png", groundLayer)
         );
-    }
-
-    public void addGraphicObjects(LevelGraphic levelDrawer, Level level) {
-        for (GameObject object : level.getGameObjects()) {
-            levelDrawer.addGraphicObject(object);
-        }
     }
 
     public void initActionGenerators(LevelGenerator levelGenerator, LevelGraphic levelDrawer) {
@@ -136,17 +133,17 @@ public class GameDesktopLauncher implements ApplicationListener {
         actionGenerators.add(new Graphic(graphicActions, levelDrawer));
     }
 
-    public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
+    public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy, List<LevelListener> listeners) {
         LevelGenerator levelGeneratorStrategy;
         switch (strategy) {
             case FROM_FILE_PLAIN_TEXT:
                 LevelReader reader = new PlaintTextLevelReader("src/main/resources/level.txt");
                 LevelParser parser = new PlainTextLevelParser();
-                levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser);
+                levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser, listeners);
                 break;
             case RANDOM:
             default:
-                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
+                levelGeneratorStrategy = new RandomLevelGenerator(8, 10, listeners);
                 break;
         }
         return levelGeneratorStrategy;

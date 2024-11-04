@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.playerinput.inputs.graphic;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.entity.draw.base.LevelGraphic;
+import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.inputs.ActionGenerator;

@@ -1,5 +1,6 @@
 package ru.mipt.bit.platformer.entity.objects.generators.from_file;
 
+import ru.mipt.bit.platformer.entity.listener.LevelListener;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.entity.objects.Tank;
@@ -10,23 +11,24 @@ import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelR
 import java.util.*;
 
 public class FromFileLevelGenerator implements LevelGenerator {
-
     private final LevelReader fileReader;
     private final LevelParser fileParser;
     private List<Obstacle> obstacles;
     private List<Tank> tanks;
     private Level level;
+    private final List<LevelListener> listeners;
 
-    public FromFileLevelGenerator(LevelReader fileReader, LevelParser fileParser) {
+    public FromFileLevelGenerator(LevelReader fileReader, LevelParser fileParser, List<LevelListener> listeners) {
         this.fileReader = fileReader;
         this.fileParser = fileParser;
+        this.listeners = listeners;
     }
     @Override
     public void generate() {
         List<String> lines = fileReader.read();
         fileParser.parse(lines);
 
-        level = new Level(fileParser.getHeight(), fileParser.getWidth());
+        level = new Level(fileParser.getHeight(), fileParser.getWidth(), listeners);
 
         tanks = fileParser.getTanks();
         tanks.forEach(tank -> level.addGameObject(tank));
