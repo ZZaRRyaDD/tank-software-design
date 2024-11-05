@@ -1,8 +1,6 @@
 package ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.plaint_text;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.entity.objects.Tank;
-import ru.mipt.bit.platformer.entity.objects.Obstacle;
 import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
 
 import java.util.ArrayList;
@@ -10,45 +8,43 @@ import java.util.List;
 
 public class PlainTextLevelParser implements LevelParser {
 
-    private final List<Tank> tanks = new ArrayList<>();
-    private final List<Obstacle> obstacles = new ArrayList<>();
+    private final List<GridPoint2> tanks = new ArrayList<>();
+    private final List<GridPoint2> obstacles = new ArrayList<>();
     private Integer height;
     private Integer width;
 
     @Override
     public void parse(List<String> lines) {
-        width = lines.size();
-        height = lines.get(0).length();
+        height = lines.size();
+        width = lines.get(0).length();
 
         tanks.clear();
         obstacles.clear();
-        int xCoordinate, yCoordinate = lines.size();
-        for (String line : lines) {
-            xCoordinate = 0;
-            for (char c : line.toCharArray()) {
-                xCoordinate++;
+        for (int yCoordinate = height; yCoordinate > 0; yCoordinate--) {
+            for (int xCoordinate = 0; xCoordinate < width; xCoordinate++) {
+                char c = lines.get(height - yCoordinate).charAt(xCoordinate);
+
                 switch (c) {
                     case '_':
                         continue;
                     case 'T':
-                        obstacles.add(new Obstacle(new GridPoint2(xCoordinate, yCoordinate)));
+                        obstacles.add(new GridPoint2(xCoordinate, yCoordinate));
                         break;
                     case 'X':
-                        tanks.add(new Tank(new GridPoint2(xCoordinate, yCoordinate), 100));
+                        tanks.add(new GridPoint2(xCoordinate, yCoordinate));
                         break;
                 }
             }
-            yCoordinate--;
         }
     }
 
     @Override
-    public List<Tank> getTanks() {
+    public List<GridPoint2> getTanksPoints() {
         return tanks;
     }
 
     @Override
-    public List<Obstacle> getObstacles() {
+    public List<GridPoint2> getObstaclesPoints() {
         return obstacles;
     }
 

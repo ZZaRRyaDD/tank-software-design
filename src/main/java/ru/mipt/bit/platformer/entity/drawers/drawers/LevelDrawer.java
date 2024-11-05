@@ -69,7 +69,7 @@ public class LevelDrawer implements LevelGraphic {
 
     @Override
     public void onDeleteGameObject(GameObject object) {
-        graphicObjects.get(object).dispose();
-        graphicObjects.remove(object);
+        GameObjectGraphic drawer = graphicObjects.remove(object);
+        drawer.dispose();
     }
 }

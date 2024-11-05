@@ -87,7 +87,7 @@ public class RandomLevelGenerator implements LevelGenerator {
 
         for (int i = 0; i < countObjects; i++) {
             GridPoint2 point = getPoint(random);
-            Tank tank = new Tank(point, 100);
+            Tank tank = new Tank(point, 100, level);
             tanks.add(tank);
             level.addGameObject(tank);
         }

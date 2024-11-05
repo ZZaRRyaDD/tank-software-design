@@ -13,8 +13,8 @@ import java.util.*;
 public class FromFileLevelGenerator implements LevelGenerator {
     private final LevelReader fileReader;
     private final LevelParser fileParser;
-    private List<Obstacle> obstacles;
-    private List<Tank> tanks;
+    private final List<Obstacle> obstacles = new ArrayList<>();
+    private final List<Tank> tanks = new ArrayList<>();
     private Level level;
     private final List<LevelListener> listeners;
 
@@ -29,11 +29,17 @@ public class FromFileLevelGenerator implements LevelGenerator {
         fileParser.parse(lines);
 
         level = new Level(fileParser.getHeight(), fileParser.getWidth(), listeners);
+        createTanks();
+        createObstacles();
+    }
 
-        tanks = fileParser.getTanks();
+    private void createTanks() {
+        fileParser.getTanksPoints().forEach(tankPoint -> tanks.add(new Tank(tankPoint, 100, level)));
         tanks.forEach(tank -> level.addGameObject(tank));
+    }
 
-        obstacles = fileParser.getObstacles();
+    private void createObstacles() {
+        fileParser.getObstaclesPoints().forEach(obstaclePoint -> obstacles.add(new Obstacle(obstaclePoint)));
         obstacles.forEach(obstacle -> level.addGameObject(obstacle));
     }
 

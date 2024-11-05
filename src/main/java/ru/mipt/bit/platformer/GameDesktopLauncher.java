@@ -17,9 +17,11 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
 import ru.mipt.bit.platformer.entity.drawers.decorators.HealthBarDrawerDecorator;
+import ru.mipt.bit.platformer.entity.drawers.drawers.factories.BulletDrawerFactory;
 import ru.mipt.bit.platformer.entity.drawers.drawers.factories.ObstacleDrawerFactory;
 import ru.mipt.bit.platformer.entity.drawers.drawers.factories.TankDrawerFactory;
 import ru.mipt.bit.platformer.entity.listener.LevelListener;
+import ru.mipt.bit.platformer.entity.objects.Bullet;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.entity.drawers.drawers.LevelDrawer;
 import ru.mipt.bit.platformer.entity.objects.Obstacle;
@@ -49,7 +51,6 @@ import ru.mipt.bit.platformer.util.TileMovement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -94,7 +95,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         initGraphicFactories(levelDrawer, tileMovement, groundLayer);
     }
 
-    public void initGraphicFactories(LevelGraphic levelDrawer, TileMovement tileMovement, TiledMapTileLayer groundLayer ) {
+    public void initGraphicFactories(LevelGraphic levelDrawer, TileMovement tileMovement, TiledMapTileLayer groundLayer) {
         levelDrawer.addStrategyGraphics(
                 Tank.class,
                 new TankDrawerFactory("images/blueTank.png", tileMovement)
@@ -102,6 +103,10 @@ public class GameDesktopLauncher implements ApplicationListener {
         levelDrawer.addStrategyGraphics(
                 Obstacle.class,
                 new ObstacleDrawerFactory("images/greenTree.png", groundLayer)
+        );
+        levelDrawer.addStrategyGraphics(
+                Bullet.class,
+                new BulletDrawerFactory("images/bullet.png", tileMovement)
         );
     }
 
@@ -159,7 +164,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         }
         actions.forEach(AbstractAction::apply);
 
-        level.updateState(Gdx.graphics.getDeltaTime());
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        level.updateState(deltaTime);
         levelDrawer.render();
     }
 

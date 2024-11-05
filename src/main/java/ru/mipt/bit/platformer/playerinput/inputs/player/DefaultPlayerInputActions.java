@@ -3,6 +3,7 @@ package ru.mipt.bit.platformer.playerinput.inputs.player;
 import ru.mipt.bit.platformer.entity.objects.Level;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractActionFactory;
 import ru.mipt.bit.platformer.playerinput.actions.factories.MoveActionFactory;
+import ru.mipt.bit.platformer.playerinput.actions.factories.ShootActionFactory;
 import ru.mipt.bit.platformer.playerinput.inputs.Direction;
 import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
 import ru.mipt.bit.platformer.playerinput.inputs.DefaultInputActions;
@@ -28,6 +29,7 @@ public class DefaultPlayerInputActions implements DefaultInputActions {
         associationKeys.put(W, new MoveActionFactory(Direction.UP, level));
         associationKeys.put(DOWN, new MoveActionFactory(Direction.DOWN, level));
         associationKeys.put(S, new MoveActionFactory(Direction.DOWN, level));
+        associationKeys.put(SPACE, new ShootActionFactory());
     }
 
     @Override

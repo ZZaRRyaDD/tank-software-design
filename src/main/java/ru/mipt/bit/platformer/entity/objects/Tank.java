@@ -1,26 +1,26 @@
 package ru.mipt.bit.platformer.entity.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.entity.objects.base.GameObject;
-import ru.mipt.bit.platformer.entity.objects.base.Livable;
-import ru.mipt.bit.platformer.entity.objects.base.Movable;
+import ru.mipt.bit.platformer.entity.objects.base.*;
 import ru.mipt.bit.platformer.playerinput.inputs.Direction;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-public class Tank implements GameObject, Livable, Movable {
+public class Tank implements GameObject, Livable, Movable, Shootable, Damaged {
     private GridPoint2 destinationCoordinates;
     private GridPoint2 coordinates;
     private Direction direction;
+    private Level level;
     private int health;
     private float movementProgress = 1f;
 
-    public Tank(GridPoint2 point, int health) {
+    public Tank(GridPoint2 point, int health, Level level) {
         this.direction = Direction.UP;
         this.destinationCoordinates = point;
         this.coordinates = new GridPoint2(this.destinationCoordinates);
         this.health = health;
+        this.level = level;
     }
 
     @Override
@@ -52,11 +52,19 @@ public class Tank implements GameObject, Livable, Movable {
         return isEqual(movementProgress, MOVEMENT_PROGRESS_MOVE);
     }
 
+    private boolean isDead() {
+        return health <= 0;
+    }
+
     @Override
     public void updateState(float deltaTime) {
-        movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
-        if (isMoving()) {
-            coordinates.set(destinationCoordinates);
+        if (isDead()) {
+            level.deleteGameObject(this);
+        } else {
+            movementProgress = continueProgress(movementProgress, deltaTime, movementSpeed);
+            if (isMoving()) {
+                coordinates.set(destinationCoordinates);
+            }
         }
     }
 
@@ -74,5 +82,22 @@ public class Tank implements GameObject, Livable, Movable {
     @Override
     public float getHealth() {
         return health;
+    }
+
+    @Override
+    public void shoot() {
+        GridPoint2 startPointBullet = getCoordinates().cpy().add(getDirection().getDirectionPoint());
+        Bullet bullet = new Bullet(
+                50,
+                startPointBullet,
+                getDirection(),
+                level
+        );
+        level.addGameObject(bullet);
+    }
+
+    @Override
+    public void takeDamage(float damage) {
+        health -= damage;
     }
 }

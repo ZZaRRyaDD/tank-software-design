@@ -14,7 +14,7 @@ public class TankTest {
     public void testTankMoveToNewDirectionWithCoordinates(Direction direction){
         GridPoint2 directionPoint = direction.getDirectionPoint();
 
-        Tank tank = new Tank(new GridPoint2(1, 0), 100);
+        Tank tank = new Tank(new GridPoint2(1, 0), 100, null);
         tank.move(direction, true);
 
         GridPoint2 targetCoordinates = tank.getCoordinates();
@@ -30,7 +30,7 @@ public class TankTest {
         GridPoint2 directionPoint = direction.getDirectionPoint();
         float directionRotation = direction.getDirectionRotation();
 
-        Tank tank = new Tank(new GridPoint2(1, 0), 100);
+        Tank tank = new Tank(new GridPoint2(1, 0), 100, null);
         float deltaTime = 1f;
 
         GridPoint2 targetCoordinates = tank.getCoordinates();
