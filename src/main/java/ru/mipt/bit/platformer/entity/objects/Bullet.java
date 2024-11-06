@@ -10,14 +10,13 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Bullet implements GameObject {
     float MOVEMENT_PROGRESS_MOVE = 1f;
-    float MOVEMENT_PROGRESS_TURN = 0f;
-    float movementSpeed = 0.8f;
+    float movementSpeed = 1.0f;
 
-    private float damage;
-    private GridPoint2 coordinates;
-    private GridPoint2 destinationCoordinates;
-    private Direction direction;
-    private Level level;
+    private final float damage;
+    private final GridPoint2 coordinates;
+    private final GridPoint2 destinationCoordinates;
+    private final Direction direction;
+    private final Level level;
     private float movementProgress = 1f;
 
     public Bullet(float damage, GridPoint2 coordinates, Direction direction, Level level) {
@@ -26,35 +25,6 @@ public class Bullet implements GameObject {
         this.destinationCoordinates = new GridPoint2(coordinates);
         this.direction = direction;
         this.level = level;
-    }
-
-    @Override
-    public void updateState(float deltaTime) {
-        hit();
-        move();
-        updateProgressState(deltaTime);
-    }
-
-    private void hit() {
-        if (isHit()){
-            level.deleteGameObject(this);
-            applyDamage();
-        }
-    }
-
-    private void applyDamage() {
-        GameObject object = level.gatGameObjectByCoordinates(coordinates);
-        if (object instanceof Damaged){
-            ((Damaged) object).takeDamage(damage);
-        }
-    }
-
-    private boolean isHit() {
-        return level.gatGameObjectByCoordinates(coordinates) != null;
-    }
-
-    private boolean isMoving() {
-        return isEqual(movementProgress, MOVEMENT_PROGRESS_MOVE);
     }
 
     @Override
@@ -74,6 +44,35 @@ public class Bullet implements GameObject {
         return direction;
     }
 
+    private boolean isHit() {
+        return level.getGameObjectByCoordinates(coordinates) != this;
+    }
+
+    private boolean isMoving() {
+        return isEqual(movementProgress, MOVEMENT_PROGRESS_MOVE);
+    }
+
+    @Override
+    public void updateState(float deltaTime) {
+        hit();
+        move();
+        updateProgressState(deltaTime);
+    }
+
+    private void hit() {
+        if (isHit()){
+            level.deleteGameObject(this);
+            applyDamage();
+        }
+    }
+
+    private void applyDamage() {
+        GameObject object = level.getGameObjectByCoordinates(coordinates);
+        if (object instanceof Damaged){
+            ((Damaged) object).takeDamage(damage);
+        }
+    }
+
     @Override
     public boolean isBusyCoordinate(GridPoint2 point) {
         return coordinates.equals(point) || destinationCoordinates.equals(point);
@@ -84,7 +83,6 @@ public class Bullet implements GameObject {
         if (isMoving()) {
             coordinates.set(destinationCoordinates);
         }
-        System.out.println(coordinates);
     }
 
     public void move() {

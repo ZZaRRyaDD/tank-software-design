@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
-    private final List<GameObject> gameObjects;
+    private final List<GameObject> gameObjects = new ArrayList<>();
     private final Integer height;
     private final Integer width;
     private final List<LevelListener> listeners;
@@ -17,7 +17,6 @@ public class Level {
         this.height = height;
         this.width = width;
         this.listeners = listeners;
-        gameObjects = new ArrayList<>();
     }
 
     public void addGameObject(GameObject object) {
@@ -39,7 +38,7 @@ public class Level {
         return true;
     }
 
-    public GameObject gatGameObjectByCoordinates(GridPoint2 point) {
+    public GameObject getGameObjectByCoordinates(GridPoint2 point) {
         for (GameObject object : gameObjects) {
             if (object.getCoordinates().equals(point)) {
                 return object;
@@ -52,12 +51,14 @@ public class Level {
         return (0 <= point.x && point.x < width) && (0 <= point.y && point.y < height);
     }
 
+    public boolean hasObject(GameObject object) {
+        return gameObjects.contains(object);
+    }
+
     public void updateState(float deltaTime) {
-//        for (GameObject object : gameObjects) {
-//            object.updateState(deltaTime);
-//        }
-        for (int i = 0; i < gameObjects.size(); i++) {
-            gameObjects.get(i).updateState(deltaTime);
+        List<GameObject> copyGameObjects = new ArrayList<>(gameObjects);
+        for (GameObject object : copyGameObjects) {
+            object.updateState(deltaTime);
         }
     }
 }

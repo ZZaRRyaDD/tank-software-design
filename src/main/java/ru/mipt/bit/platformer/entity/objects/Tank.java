@@ -8,10 +8,10 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 public class Tank implements GameObject, Livable, Movable, Shootable, Damaged {
-    private GridPoint2 destinationCoordinates;
-    private GridPoint2 coordinates;
+    private final GridPoint2 destinationCoordinates;
+    private final GridPoint2 coordinates;
     private Direction direction;
-    private Level level;
+    private final Level level;
     private int health;
     private float movementProgress = 1f;
 
@@ -88,7 +88,7 @@ public class Tank implements GameObject, Livable, Movable, Shootable, Damaged {
     public void shoot() {
         GridPoint2 startPointBullet = getCoordinates().cpy().add(getDirection().getDirectionPoint());
         Bullet bullet = new Bullet(
-                50,
+                10,
                 startPointBullet,
                 getDirection(),
                 level

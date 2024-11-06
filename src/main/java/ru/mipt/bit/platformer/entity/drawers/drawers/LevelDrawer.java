@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import ru.mipt.bit.platformer.entity.drawers.base.GameObjectGraphic;
 import ru.mipt.bit.platformer.entity.drawers.base.GraphicFactory;
 import ru.mipt.bit.platformer.entity.drawers.base.LevelGraphic;
-import ru.mipt.bit.platformer.entity.listener.LevelListener;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 
 import java.util.HashMap;
@@ -15,8 +14,8 @@ import java.util.Map;
 
 public class LevelDrawer implements LevelGraphic {
     private final Batch batch;
-    private TiledMap map;
-    private MapRenderer renderer;
+    private final TiledMap map;
+    private final MapRenderer renderer;
     private final Map<Class<? extends GameObject>, GraphicFactory> strategyGraphics = new HashMap<>();
     private final Map<GameObject, GameObjectGraphic> graphicObjects = new HashMap<>();
 
@@ -63,13 +62,12 @@ public class LevelDrawer implements LevelGraphic {
 
     @Override
     public void onAddGameObject(GameObject object) {
-        GameObjectGraphic gameObjectGraphic = strategyGraphics.get(object.getClass()).create(object);
-        graphicObjects.put(object, gameObjectGraphic);
+        GameObjectGraphic drawer = strategyGraphics.get(object.getClass()).create(object);
+        graphicObjects.put(object, drawer);
     }
 
     @Override
     public void onDeleteGameObject(GameObject object) {
-        GameObjectGraphic drawer = graphicObjects.remove(object);
-        drawer.dispose();
+        graphicObjects.remove(object).dispose();
     }
 }

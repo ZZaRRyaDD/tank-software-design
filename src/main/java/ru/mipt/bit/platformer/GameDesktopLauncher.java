@@ -101,12 +101,12 @@ public class GameDesktopLauncher implements ApplicationListener {
                 new TankDrawerFactory("images/blueTank.png", tileMovement)
         );
         levelDrawer.addStrategyGraphics(
-                Obstacle.class,
-                new ObstacleDrawerFactory("images/greenTree.png", groundLayer)
-        );
-        levelDrawer.addStrategyGraphics(
                 Bullet.class,
                 new BulletDrawerFactory("images/bullet.png", tileMovement)
+        );
+        levelDrawer.addStrategyGraphics(
+                Obstacle.class,
+                new ObstacleDrawerFactory("images/greenTree.png", groundLayer)
         );
     }
 
@@ -120,7 +120,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     public void configurePlayerActionController(List<ActionGenerator> actionGenerators, Level level, Tank object) {
         InputActions keyboardActions = new PlayerInputActions();
         new DefaultPlayerInputActions(level).registerActions(keyboardActions);
-        actionGenerators.add(new PlayerInput(keyboardActions, object));
+        actionGenerators.add(new PlayerInput(keyboardActions, level, object));
     }
 
     public void configureAIActionController(List<ActionGenerator> actionGenerators, Level level, List<Tank> objects) {
@@ -128,7 +128,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         new DefaultAIActions(level).registerActions(aiActions);
 
         for (GameObject object : objects) {
-            actionGenerators.add(new AI(aiActions, object));
+            actionGenerators.add(new AI(aiActions, level, object));
         }
     }
 
