@@ -4,38 +4,75 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-import ru.mipt.bit.platformer.entity.level.Level;
-import ru.mipt.bit.platformer.entity.tank.PlayerInput;
+import ru.mipt.bit.platformer.entity.objects.Level;
+import ru.mipt.bit.platformer.entity.drawers.LevelDrawer;
+import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
+import ru.mipt.bit.platformer.entity.objects.generators.StrategyGenerate;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.LevelParser;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.plaint_text.PlainTextLevelParser;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.LevelReader;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader;
+import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.DefaultKeyboardActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInputActions;
+import ru.mipt.bit.platformer.playerinput.inputs.keyboard.KeyboardPlayerInput;
+import ru.mipt.bit.platformer.playerinput.inputs.PlayerInput;
+
 
 public class GameDesktopLauncher implements ApplicationListener {
-    private Batch batch;
-
     private Level level;
+    private LevelDrawer levelDrawer;
+    private PlayerInput input;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        level = new Level("level.tmx", batch);
+        input = configureInput();
+
+        LevelGenerator levelGenerator = getLevelGeneratorStrategy(StrategyGenerate.RANDOM);
+        level = levelGenerator.generate();
+
+        levelDrawer = new LevelDrawer("level.tmx", new SpriteBatch(), level);
+        levelDrawer.draw();
+    }
+
+    public PlayerInput configureInput() {
+        PlayerInputActions keyboardActions = new KeyboardPlayerInputActions();
+        new DefaultKeyboardActions().registerActions(keyboardActions);
+
+        return new KeyboardPlayerInput(keyboardActions);
+    }
+
+    public LevelGenerator getLevelGeneratorStrategy(StrategyGenerate strategy) {
+        LevelGenerator levelGeneratorStrategy;
+        switch (strategy) {
+            case RANDOM:
+                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
+                break;
+            case FROM_FILE_PLAIN_TEXT:
+                LevelReader reader = new PlaintTextLevelReader("src/main/resources/level.txt");
+                LevelParser parser = new PlainTextLevelParser();
+                levelGeneratorStrategy = new FromFileLevelGenerator(reader, parser);
+                break;
+            default:
+                levelGeneratorStrategy = new RandomLevelGenerator(8, 10);
+                break;
+        }
+        return levelGeneratorStrategy;
     }
 
     @Override
     public void render() {
         clearScreen();
-        level.moveTank(PlayerInput.chooseDirection());
-        level.renderMoves(Gdx.graphics.getDeltaTime());
 
-        // start recording all drawing commands
-        batch.begin();
+        input.getAction().apply(level, level.getFirstMovable());
 
-        level.renderObjects(batch);
-
-        // submit all drawing requests
-        batch.end();
+        levelDrawer.renderMoves(Gdx.graphics.getDeltaTime());
+        levelDrawer.recordDrawCommand();
     }
 
     public void clearScreen() {
@@ -60,9 +97,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     @Override
     public void dispose() {
-        // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        level.dispose();
-        batch.dispose();
+        levelDrawer.dispose();
     }
 
     public static void main(String[] args) {
