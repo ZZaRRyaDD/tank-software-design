@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="levelRandomGenerator" class="ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator">
+        <constructor-arg index="0" value="${levelRandomGenerator.height}"/>
+        <constructor-arg index="1" value="${levelRandomGenerator.width}"/>
+        <constructor-arg index="2">
+            <list>
+                <ref bean="mainLevelDrawer" />
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>
