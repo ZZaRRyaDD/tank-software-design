@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="mapFactory" class="com.badlogic.gdx.maps.tiled.TmxMapLoader">
+    </bean>
+    <bean id="map" class="com.badlogic.gdx.maps.tiled.TiledMap" factory-bean="mapFactory" factory-method="load">
+        <constructor-arg value="${map.filename}" />
+    </bean>
+
+    <bean id="groundLayer" class="ru.mipt.bit.platformer.util.GdxGameUtils" factory-method="getSingleLayer">
+        <constructor-arg ref="map"/>
+    </bean>
+
+    <bean id="batchFactory" class="com.badlogic.gdx.graphics.g2d.SpriteBatch">
+    </bean>
+
+    <bean id="renderer" class="ru.mipt.bit.platformer.util.GdxGameUtils" factory-method="createSingleLayerMapRenderer">
+        <constructor-arg ref="map"/>
+        <constructor-arg ref="batchFactory"/>
+    </bean>
+
+    <bean id="baseLevelDrawer" class="ru.mipt.bit.platformer.entity.drawers.drawers.LevelDrawer">
+        <constructor-arg index="0" ref="map"/>
+        <constructor-arg index="1" ref="renderer"/>
+        <constructor-arg index="2" ref="batchFactory"/>
+    </bean>
+    <bean id="mainLevelDrawer" class="ru.mipt.bit.platformer.entity.drawers.decorators.HealthBarDrawerDecorator">
+        <constructor-arg index="0" ref="baseLevelDrawer"/>
+    </bean>
+</beans>
