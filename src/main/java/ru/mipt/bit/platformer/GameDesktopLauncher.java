@@ -19,6 +19,7 @@ import ru.mipt.bit.platformer.entity.objects.Tank;
 import ru.mipt.bit.platformer.entity.objects.base.GameObject;
 import ru.mipt.bit.platformer.entity.objects.generators.LevelGenerator;
 import ru.mipt.bit.platformer.entity.objects.generators.random.RandomLevelGenerator;
+import ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator;
 import ru.mipt.bit.platformer.playerinput.actions.base.AbstractAction;
 import ru.mipt.bit.platformer.playerinput.inputs.ActionGenerator;
 import ru.mipt.bit.platformer.playerinput.inputs.InputActions;
@@ -61,6 +62,8 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         LevelGenerator levelGenerator = context.getBean("levelRandomGenerator", RandomLevelGenerator.class);
         levelGenerator.generate();
+//        LevelGenerator levelGenerator = context.getBean("levelTxtFileReader", FromFileLevelGenerator.class);
+//        levelGenerator.generate();
 
         level = levelGenerator.getLevel();
 

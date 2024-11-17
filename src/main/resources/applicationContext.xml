@@ -10,5 +10,6 @@
     <context:property-placeholder location="classpath:config/app.properties"/>
 
     <import resource="drawer.xml"/>
-    <import resource="level.xml"/>
+    <import resource="levelRandomGenerator.xml"/>
+<!--    <import resource="levelTxtFileReader.xml"/>-->
 </beans>

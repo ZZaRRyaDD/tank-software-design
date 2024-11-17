@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="levelReader" class="ru.mipt.bit.platformer.entity.objects.generators.from_file.readers.plaint_text.PlaintTextLevelReader">
+        <constructor-arg index="0" value="${levelFileReader.file}"/>
+    </bean>
+
+    <bean id="levelParser" class="ru.mipt.bit.platformer.entity.objects.generators.from_file.parsers.plaint_text.PlainTextLevelParser">
+    </bean>
+
+    <bean id="levelTxtFileReader" class="ru.mipt.bit.platformer.entity.objects.generators.from_file.FromFileLevelGenerator">
+        <constructor-arg index="0" ref="levelReader"/>
+        <constructor-arg index="1" ref="levelParser"/>
+        <constructor-arg index="2">
+            <list>
+                <ref bean="mainLevelDrawer" />
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>
